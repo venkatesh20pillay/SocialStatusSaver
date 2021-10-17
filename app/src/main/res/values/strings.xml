@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Status Saver</string>
+    <string name="tab_text_1">Images</string>
+    <string name="tab_text_2">Videos</string>
+    <string name="tab_text_3">Saved</string>
+    <string name="permission">Please give storage permission <u><i>Click here</i></u></string>
+    <string name="howtouse1">1. Open your WhatsApp</string>
+    <string name="howtouse2">2. View status</string>
+    <string name="howtouse3">3. Comeback and save any image or video</string>
+    <string name="howtouse4">4. Click on save</string>
+    <string name="nostatusimages"><u><i>No images to show. Know how to use Click here</i></u> </string>
+    <string name="nostatusvideos"><u><i>No videos to show. Know how to use Click here</i></u></string>
+    <string name="nosavedstatus"><u><i>No saved status to show. Know how to use Click here</i></u></string>
+</resources>
