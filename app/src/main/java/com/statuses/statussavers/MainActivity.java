@@ -104,9 +104,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        List<Fragment> fragment = fragmentManager.getFragments();
-        Fragment f = (ImagesFragment)fragment.get(0);
+
         if(grantResults.length > 1 &&grantResults[0]==0 && grantResults[1]==0) {
             Intent intent = new Intent("custom-event-name");
             // You can also include some extra data.
