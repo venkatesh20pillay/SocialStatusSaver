@@ -1,13 +1,19 @@
 package com.statuses.statussavers;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -15,6 +21,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.storage.StorageManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -52,7 +59,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkPermission() {
 
-        if(SDK_INT>23) {
+        if(SDK_INT>=29) {
+          //  getPermission();
+        }
+
+        else if(SDK_INT>23) {
             if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED) {
 
             }
@@ -61,6 +72,34 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void getPermission() {
+        StorageManager storageManager = (StorageManager) getApplication().getSystemService(Context.STORAGE_SERVICE);
+        Intent intent = storageManager.getPrimaryStorageVolume().createOpenDocumentTreeIntent();
+        String path = "Android%2Fmedia%2Fcom.whatsapp%2FWhatsApp%2FMedia";
+        Uri uri = intent.getParcelableExtra("android.provider.extra.INITIAL_URI");
+        String scheme = uri.toString();
+        scheme = scheme.replace("/root/", "/tree/");
+        scheme += "%3A" + path;
+        uri = Uri.parse(scheme);
+        intent.putExtra("android.provider.extra.INITIAL_URI", uri);
+        intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
+        startActivityForResult(intent, 4321);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK) {
+            Uri tree = data.getData();
+            SharedPreferences sh = getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
+            SharedPreferences.Editor ed = sh.edit();
+            ed.putString("PATH", tree.toString());
+            ed.apply();
+        }
     }
 
     @Override

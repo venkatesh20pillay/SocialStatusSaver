@@ -7,11 +7,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.storage.StorageManager;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +28,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -118,6 +123,17 @@ public class ImagesFragment extends Fragment {
         });
     }
 
+    private Boolean readDataFromPrefs() {
+        SharedPreferences sh = getActivity().getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
+        String uri = sh.getString("PATH", "");
+        if(uri!=null) {
+            if (uri.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void openHowToUse() {
         Intent intent = new Intent(getContext(), HowToUse.class);
         startActivity(intent);
@@ -127,6 +143,25 @@ public class ImagesFragment extends Fragment {
     private ArrayList<ModelClass> getData() {
 
         ModelClass f;
+        if(SDK_INT>=29) {
+            SharedPreferences sh = getActivity().getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
+            String uri = sh.getString("PATH", "");
+            getContext().getContentResolver().takePersistableUriPermission(Uri.parse(uri), Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            if (uri != null) {
+                DocumentFile fileDoc = DocumentFile.fromTreeUri(getActivity().getApplicationContext(),Uri.parse(uri));
+                if (fileDoc.listFiles() != null){
+                    DocumentFile[] files = fileDoc.listFiles();
+                    for(int i = 0;i< files.length;i++) {
+                        DocumentFile file = files[i];
+                        f = new ModelClass(file.getUri().getPath(), file.getName(), file.getUri());
+                        if (!f.getUri().toString().endsWith(".nomedia")&&(!f.getUri().toString().endsWith(".mp4"))) {
+                            fileslist.add(f);
+                        }
+                    }
+                }
+            }
+        }
+        else {
         String targetpath = Environment.getExternalStorageDirectory().getAbsolutePath()+Constant.FOLDER_NAME+"Media/.Statuses";
         File targetdir = new File(targetpath);
         files = targetdir.listFiles();
@@ -144,7 +179,7 @@ public class ImagesFragment extends Fragment {
                     fileslist.add(f);
                 }
             }
-        }
+        }}
         if(!fileslist.isEmpty()) {
             refreshLayout2.setVisibility(View.GONE);
             refreshLayout.setVisibility(View.VISIBLE);
@@ -202,8 +237,8 @@ public class ImagesFragment extends Fragment {
     }
 
     private void checkIfAllowed() {
-        if(SDK_INT>=30) {
-            boolean allowed = Environment.isExternalStorageManager();
+        if(SDK_INT>=29) {
+            boolean allowed = readDataFromPrefs();
             if(allowed) {
                 setuplayout();
             }
@@ -232,14 +267,15 @@ public class ImagesFragment extends Fragment {
 
     private void checkPermission() {
 
-        if(SDK_INT >= 30) {
-            boolean allowed = Environment.isExternalStorageManager();
+        if(SDK_INT >= 29) {
+            boolean allowed = readDataFromPrefs();
             if(allowed) {
                 setuplayout();
             }
             else {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+               // ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 //openDialog();
+                getPermission();
             }
         }
         else {
@@ -254,7 +290,22 @@ public class ImagesFragment extends Fragment {
        }
 
     }
-    
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void getPermission() {
+        StorageManager storageManager = (StorageManager) getActivity().getApplication().getSystemService(Context.STORAGE_SERVICE);
+        Intent intent = storageManager.getPrimaryStorageVolume().createOpenDocumentTreeIntent();
+        String path = "Android%2Fmedia%2Fcom.whatsapp%2FWhatsApp%2FMedia";
+        Uri uri = intent.getParcelableExtra("android.provider.extra.INITIAL_URI");
+        String scheme = uri.toString();
+        scheme = scheme.replace("/root/", "/tree/");
+        scheme += "%3A" + path;
+        uri = Uri.parse(scheme);
+        intent.putExtra("android.provider.extra.INITIAL_URI", uri);
+        intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
+        startActivityForResult(intent, 4321);
+    }
+
     private void setupOnActivityResult() {
         someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -263,6 +314,11 @@ public class ImagesFragment extends Fragment {
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             // There are no request codes
+                            Uri tree = result.getData().getData();
+                            SharedPreferences sh = getActivity().getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor ed = sh.edit();
+                            ed.putString("PATH", tree.toString());
+                            ed.apply();
                             setuplayout();
                         }
                     }
