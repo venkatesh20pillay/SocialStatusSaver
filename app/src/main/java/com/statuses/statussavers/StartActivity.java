@@ -58,10 +58,22 @@ public class StartActivity extends AppCompatActivity {
         permission1.setText("Please give storage permission to save status");
         permission2.setText("Please give access to Android/Media folder to get all the status");
         permission1Button.setText("Click Here");
-        permission2Button.setText("Click Here");
+        setPermission2ButtonView();
         letsGo.setText("Please give above 2 permissions");
         letsGo.setBackgroundColor(Color.parseColor("#A9A9A9"));
         letsGo.setTextColor(getResources().getColor(R.color.white));
+    }
+
+    private void setPermission2ButtonView() {
+        boolean allowed = readDataFromPrefs();
+        if(allowed) {
+            permission2Button.setText("Done");
+            permission2Button.setTextColor(getResources().getColor(R.color.black));
+            permission2Button.setBackgroundColor(getResources().getColor(R.color.white));
+        }
+        else {
+            permission2Button.setText("Click Here");
+        }
     }
 
     private void setupOnClickButton() {
@@ -114,6 +126,7 @@ public class StartActivity extends AppCompatActivity {
             if (ContextCompat.checkSelfPermission(StartActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 //setuplayout();
             } else {
+
                 ActivityCompat.requestPermissions(StartActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 //Intent intent= new Intent(MainActivity.class,WRITE_EXTERNAL_STORAGE)
                 //someActivityResultLauncher.launch();
@@ -135,15 +148,17 @@ public class StartActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void getPermission() {
         StorageManager storageManager = (StorageManager) StartActivity.this.getApplication().getSystemService(Context.STORAGE_SERVICE);
-        Intent intent = storageManager.getPrimaryStorageVolume().createOpenDocumentTreeIntent();
-        String path = "Android%2Fmedia%2Fcom.whatsapp%2FWhatsApp%2FMedia";
-        Uri uri = intent.getParcelableExtra("android.provider.extra.INITIAL_URI");
-        String scheme = uri.toString();
-        scheme = scheme.replace("/root/", "/tree/");
-        scheme += "%3A" + path;
-        uri = Uri.parse(scheme);
-        intent.putExtra("android.provider.extra.INITIAL_URI", uri);
-        intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
+       // Intent intent = storageManager.getPrimaryStorageVolume().createOpenDocumentTreeIntent();
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+//        String path = "Android%2Fmedia";
+//        Uri uri = intent.getParcelableExtra("android.provider.extra.INITIAL_URI");
+//        String scheme = uri.toString();
+//        scheme = scheme.replace("/root/", "/tree/");
+//        scheme += "%3A" + path;
+//        uri = Uri.parse(scheme);
+//        intent.putExtra("android.provider.extra.INITIAL_URI", uri);
+//        intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
+      //  intent.setType("*/*");
         someActivityResultLauncher.launch(intent);
     }
 
@@ -152,15 +167,24 @@ public class StartActivity extends AppCompatActivity {
         someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
+                   // @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             // There are no request codes
                             Uri tree = result.getData().getData();
-                            SharedPreferences sh = StartActivity.this.getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor ed = sh.edit();
-                            ed.putString("PATH", tree.toString());
-                            ed.apply();
+                            String path = tree.toString();
+                            if(path != null) {
+                                //path += "%2F.Statuses";
+                                getContentResolver().takePersistableUriPermission(Uri.parse(path), Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            }
+                            //if (path.endsWith("WhatsApp%2FMedia")) {
+                                SharedPreferences sh = StartActivity.this.getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor ed = sh.edit();
+                               // path += "%2F.Statuses";
+                                ed.putString("PATH", path);
+                                ed.apply();
+                            //}
                            // setuplayout();
                         }
                         Log.d("veknatesh", "li");

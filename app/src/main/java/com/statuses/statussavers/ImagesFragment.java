@@ -146,8 +146,9 @@ public class ImagesFragment extends Fragment {
         if(SDK_INT>=29) {
             SharedPreferences sh = getActivity().getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
             String uri = sh.getString("PATH", "");
-            getContext().getContentResolver().takePersistableUriPermission(Uri.parse(uri), Intent.FLAG_GRANT_READ_URI_PERMISSION);
+           // getContext().getContentResolver().takePersistableUriPermission(Uri.parse(uri), Intent.FLAG_GRANT_READ_URI_PERMISSION);
             if (uri != null) {
+               // uri += "%2F.Statuses";
                 DocumentFile fileDoc = DocumentFile.fromTreeUri(getActivity().getApplicationContext(),Uri.parse(uri));
                 if (fileDoc.listFiles() != null){
                     DocumentFile[] files = fileDoc.listFiles();
@@ -275,7 +276,7 @@ public class ImagesFragment extends Fragment {
             else {
                // ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 //openDialog();
-                getPermission();
+               // getPermission();
             }
         }
         else {
