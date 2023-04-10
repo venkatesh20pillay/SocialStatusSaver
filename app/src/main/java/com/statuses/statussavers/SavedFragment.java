@@ -164,6 +164,19 @@ public class SavedFragment extends Fragment {
             }
         }
 
+        String targetpath1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/StatusSaver";
+        File targetdir1 = new File(targetpath1);
+        File [] files1= targetdir1.listFiles();
+        if(files1 != null) {
+            for (int i = 0; i < files1.length; i++) {
+                File file = files1[i];
+                f = new ModelClass(files1[i].getAbsolutePath(), file.getName(), Uri.fromFile(file));
+                if (!f.getUri().toString().endsWith(".nomedia")) {
+                    fileslist.add(f);
+                }
+            }
+        }
+
         if(!fileslist.isEmpty()) {
             refreshLayout2.setVisibility(View.GONE);
             refreshLayout.setVisibility(View.VISIBLE);

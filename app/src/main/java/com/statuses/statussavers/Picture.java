@@ -3,12 +3,15 @@ package com.statuses.statussavers;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +22,8 @@ import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Objects;
 
 public class Picture extends AppCompatActivity {
 
@@ -60,7 +65,25 @@ public class Picture extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     if(show.equalsIgnoreCase("download")) {
-                        org.apache.commons.io.FileUtils.copyFileToDirectory(file1, destpath2);
+                        //org.apache.commons.io.FileUtils.copyFileToDirectory(file1, destpath2);
+                        String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+                        File imagesFolder = new File(directoryPath, "/StatusSaver");
+                        if(!imagesFolder.exists()) {
+                            imagesFolder.mkdirs();
+                        }
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(uri));
+                        ContentResolver resolver = getBaseContext().getContentResolver();
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
+                        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg");
+                        String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver";
+                        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
+                        Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                        OutputStream fos = resolver.openOutputStream(Objects.requireNonNull(imageUri));
+                        if (bitmap != null) {
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                            fos.close();
+                        }
                         Toast toast =  Toast.makeText(getApplicationContext(),"Image saved", Toast.LENGTH_SHORT);
                         toast.show();
                     } else {
