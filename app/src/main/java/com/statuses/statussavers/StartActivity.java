@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,30 +58,65 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void setView() {
-        permission1.setText("Please give storage permission to save status");
-        permission2.setText("Please give access to Android/Media folder to get all the status");
         setPermission1ButtonView();
         setPermission2ButtonView();
-        letsGo.setText("Please give above 2 permissions");
-        letsGo.setBackgroundColor(Color.parseColor("#A9A9A9"));
-        letsGo.setTextColor(getResources().getColor(R.color.white));
+        setLetsGoView();
+    }
+
+    private void setLetsGoView() {
+        if(checkBothPermission()) {
+            letsGo.setText("Let's Go");
+            letsGo.setBackgroundColor(Color.parseColor("#005C29"));
+            letsGo.setTextColor(getResources().getColor(R.color.white));
+        }
+        else {
+            letsGo.setText("Please give above permissions");
+            letsGo.setBackgroundColor(Color.parseColor("#808080"));
+            letsGo.setTextColor(getResources().getColor(R.color.white));
+        }
+    }
+
+    private Boolean checkBothPermission() {
+        Boolean readwrite = false;
+        Boolean path = false;
+        if(SDK_INT >=30) {
+            path = readDataFromPrefs();
+            readwrite = readPermission();
+        }
+        else {
+            path = true;
+            if(ContextCompat.checkSelfPermission(StartActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED) {
+                readwrite = true;
+            }
+
+        }
+        return path && readwrite;
     }
 
     private void setPermission2ButtonView() {
-        boolean allowed = readDataFromPrefs();
-        if(allowed) {
-            permission2Button.setText("Done");
-            permission2Button.setTextColor(getResources().getColor(R.color.black));
-            permission2Button.setBackgroundColor(getResources().getColor(R.color.white));
+        if(SDK_INT >= 30) {
+            permission2.setText("Please give access to Android/Media folder to get all the status");
+            boolean allowed = readDataFromPrefs();
+            if (allowed) {
+                permission2Button.setText("Done");
+                permission2Button.setTextColor(getResources().getColor(R.color.black));
+                permission2Button.setBackgroundColor(getResources().getColor(R.color.white));
+            } else {
+                permission2Button.setText("Click Here");
+                permission2Button.setTextColor(getResources().getColor(R.color.white));
+                permission2Button.setBackgroundColor(Color.parseColor("#005C29"));
+            }
         }
         else {
-            permission2Button.setText("Click Here");
+            permission2Button.setVisibility(View.GONE);
+            permission2.setVisibility(View.GONE);
         }
     }
 
     private void setPermission1ButtonView() {
+        permission1.setText("Please give storage permission to save status");
         if(SDK_INT >= 30) {
-            boolean allowed = Environment.isExternalStorageManager();
+            boolean allowed = readPermission();
             if(allowed) {
                 permission1Button.setText("Done");
                 permission1Button.setTextColor(getResources().getColor(R.color.black));
@@ -88,8 +124,8 @@ public class StartActivity extends AppCompatActivity {
             }
             else {
                 permission1Button.setText("Click Here");
-//                permission1Button.setTextColor(getResources().getColor(R.color.white));
-//                permission1Button.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                permission1Button.setTextColor(getResources().getColor(R.color.white));
+                permission1Button.setBackgroundColor(Color.parseColor("#005C29"));
             }
         }
 
@@ -101,8 +137,8 @@ public class StartActivity extends AppCompatActivity {
             }
             else {
                 permission1Button.setText("Click Here");
-//                permission1Button.setTextColor(getResources().getColor(R.color.white));
-//                permission1Button.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                permission1Button.setTextColor(getResources().getColor(R.color.white));
+                permission1Button.setBackgroundColor(Color.parseColor("#005C29"));
             }
         }
     }
@@ -111,21 +147,26 @@ public class StartActivity extends AppCompatActivity {
         permission1Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (permission1Button.getText().toString().equalsIgnoreCase("Click Here"));
+                if (permission1Button.getText().toString().equalsIgnoreCase("Click Here")) {
                     checkPermission1();
+                }
             }
         });
         permission2Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkPermission2();
+                if (permission2Button.getText().toString().equalsIgnoreCase("Click Here")) {
+                    checkPermission2();
+                }
             }
         });
         letsGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               Intent intent = new Intent(StartActivity.this, MainActivity.class);
-               startActivity(intent);
+                if (checkBothPermission()) {
+                    Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -156,27 +197,15 @@ public class StartActivity extends AppCompatActivity {
        }
     }
 
-    private void checkPermission() {
-
-        if (SDK_INT >= 29) {
-            boolean allowed = readDataFromPrefs();
-            if (allowed) {
-                 //setuplayout();
-            } else {
-                // ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                //openDialog();
-                getPermission();
-            }
-        } else {
-            if (ContextCompat.checkSelfPermission(StartActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                //setuplayout();
-            } else {
-
-                ActivityCompat.requestPermissions(StartActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                //Intent intent= new Intent(MainActivity.class,WRITE_EXTERNAL_STORAGE)
-                //someActivityResultLauncher.launch();
+    private Boolean readPermission() {
+        SharedPreferences sh = StartActivity.this.getSharedPreferences("PERMISSION", Context.MODE_PRIVATE);
+        String uri = sh.getString("readwrite", "");
+        if(uri!=null) {
+            if (uri.isEmpty()) {
+                return false;
             }
         }
+        return true;
     }
 
     private Boolean readDataFromPrefs() {
@@ -224,6 +253,11 @@ public class StartActivity extends AppCompatActivity {
                                     SharedPreferences.Editor ed = sh.edit();
                                     ed.putString("PATH", path);
                                     ed.apply();
+                                    setPermission2ButtonView();
+                                    setLetsGoView();
+                                }
+                                else {
+                                    Toast.makeText(getApplicationContext(),"Please don't change directory and make sure its .Statuses", Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
@@ -235,9 +269,12 @@ public class StartActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 1 && grantResults[0] == 0 && grantResults[1] == 0) {
-            permission1Button.setText("Done");
-            permission1Button.setTextColor(getResources().getColor(R.color.black));
-            permission1Button.setBackgroundColor(getResources().getColor(R.color.white));
+            SharedPreferences sh = StartActivity.this.getSharedPreferences("PERMISSION", Context.MODE_PRIVATE);
+            SharedPreferences.Editor ed = sh.edit();
+            ed.putString("readwrite", "true");
+            ed.apply();
+            setPermission1ButtonView();
+            setLetsGoView();
         }
     }
 }

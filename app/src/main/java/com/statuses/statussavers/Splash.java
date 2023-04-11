@@ -2,11 +2,16 @@ package com.statuses.statussavers;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
+
+import static android.os.Build.VERSION.SDK_INT;
 
 public class Splash extends AppCompatActivity {
     final static int SPLASH_TIMER = 2000;
