@@ -1,15 +1,32 @@
 package com.statuses.statussavers;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.app.RecoverableSecurityException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -21,13 +38,17 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Objects;
+
+import static android.os.Build.VERSION.SDK_INT;
 
 public class Picture extends AppCompatActivity {
 
-    ImageView mparticularimage, download, mychatapp, share;
+    ImageView mparticularimage, download, share;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,82 +65,152 @@ public class Picture extends AppCompatActivity {
                 shareImage();
             }
         });
-
         Intent intent = getIntent();
         String destpath = intent.getStringExtra("DEST_PATH");
         String file = intent.getStringExtra("FILE");
         String uri = intent.getStringExtra("URI_IMAGE");
         String filename = intent.getStringExtra("FILENAME_IMAGE");
         String show = intent.getStringExtra("show");
-        if(show.equalsIgnoreCase("delete")) {
-            download.setImageResource(R.mipmap.delete);
-        }
 
         File destpath2 = new File(destpath);
         File file1 = new File(file);
+        if(show.equalsIgnoreCase("delete")) {
+            if (SDK_INT == 29 || file1.getAbsolutePath().contains("Status Saver")) {
+                download.setVisibility(View.GONE);
+            }
+            else {
+                download.setImageResource(R.mipmap.delete);
+            }
+        }
 
         Glide.with(getApplicationContext()).load(uri).into(mparticularimage);
 
         download.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.Q)
             @Override
             public void onClick(View v) {
-                try {
                     if(show.equalsIgnoreCase("download")) {
-                        //org.apache.commons.io.FileUtils.copyFileToDirectory(file1, destpath2);
-                        String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
-                        File imagesFolder = new File(directoryPath, "/StatusSaver");
-                        if(!imagesFolder.exists()) {
-                            imagesFolder.mkdirs();
+                        try {
+                            if (SDK_INT < 30) {
+                                org.apache.commons.io.FileUtils.copyFileToDirectory(file1, destpath2);
+                            } else {
+                                String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+                                File imagesFolder = new File(directoryPath, "/StatusSaver");
+                                if (!imagesFolder.exists()) {
+                                    imagesFolder.mkdirs();
+                                }
+                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(uri));
+                                ContentResolver resolver = getBaseContext().getContentResolver();
+                                ContentValues contentValues = new ContentValues();
+                                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
+                                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg");
+                                String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver";
+                                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
+                                Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                                OutputStream fos = resolver.openOutputStream(Objects.requireNonNull(imageUri));
+                                if (bitmap != null) {
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                                    fos.close();
+                                }
+                            }
+                            Toast toast = Toast.makeText(getApplicationContext(), "Image saved", Toast.LENGTH_SHORT);
+                            toast.show();
                         }
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(uri));
-                        ContentResolver resolver = getBaseContext().getContentResolver();
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
-                        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg");
-                        String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver";
-                        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
-                        Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                        OutputStream fos = resolver.openOutputStream(Objects.requireNonNull(imageUri));
-                        if (bitmap != null) {
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                            fos.close();
+                        catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        Toast toast =  Toast.makeText(getApplicationContext(),"Image saved", Toast.LENGTH_SHORT);
-                        toast.show();
                     } else {
-                        org.apache.commons.io.FileUtils.delete(file1);
-                        Toast toast = Toast.makeText(getApplicationContext(),"Image deleted", Toast.LENGTH_SHORT);
-                        toast.show();
-                        finish();
+                            if (SDK_INT >= 29) {
+                                delete(file1, filename);
+                            }
+                            else {
+                                try {
+                                    String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver" + "/" +filename;
+                                    File f = new File(directoryPath1);
+                                    org.apache.commons.io.FileUtils.delete(f);
+                                    Toast toast = Toast.makeText(getApplicationContext(), "Image deleted", Toast.LENGTH_SHORT);
+                                    toast.show();
+                                    finish();
+                                }
+                                catch (IOException e) {
+                                    e.printStackTrace();
+                            }
+                        }
                     }
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-                MediaScannerConnection.scanFile(getApplicationContext(), new String[]{destpath + filename}, new String[]{"*/*"},
-                        new MediaScannerConnection.MediaScannerConnectionClient() {
-                            @Override
-                            public void onMediaScannerConnected() {
-
-                            }
-
-                            @Override
-                            public void onScanCompleted(String path, Uri uri) {
-
-                            }
-                        });
-//                Dialog dialog = new Dialog(Picture.this);
-//                dialog.setContentView(R.layout.custom_dialog);
-//                dialog.show();
-//                Button button = dialog.findViewById(R.id.okbutton);
-//                button.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                    }
-//                });
             }
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void delete(File file, String name) {
+        Uri uri1 = convertFileToContentUri(file, name);
+        if (uri1 == null) {
+            return;
+        }
+        try {
+            ContentResolver resolver = getBaseContext().getContentResolver();
+            resolver.delete(uri1, null, null);
+            Toast toast = Toast.makeText(getApplicationContext(), "Image deleted", Toast.LENGTH_SHORT);
+            toast.show();
+            finish();
+        }
+        catch (SecurityException e){
+            PendingIntent pendingIntent = null;
+            if (SDK_INT >= 30) {
+                ArrayList<Uri> uris = new ArrayList<>();
+                uris.add(uri1);
+                pendingIntent = MediaStore.createDeleteRequest(getContentResolver(), uris);
+            } else if ( e instanceof RecoverableSecurityException ) {
+                RecoverableSecurityException exception = (RecoverableSecurityException) e;
+                pendingIntent = exception.getUserAction().getActionIntent();
+
+            }
+            if (pendingIntent != null) {
+                IntentSender intentSender = pendingIntent.getIntentSender();
+                try {
+                    startIntentSenderForResult(intentSender, 100, null, 0, 0, 0);
+                } catch (IntentSender.SendIntentException sendIntentException) {
+                    sendIntentException.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Image deleted", Toast.LENGTH_SHORT);
+            toast.show();
+            finish();
+        }
+    }
+
+    private Uri convertFileToContentUri(File file, String name) {
+        String path = file.getAbsolutePath();
+        Cursor cursor = getBaseContext().getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] {MediaStore.Images.Media._ID}, MediaStore.Images.Media.DATA + "=? ", new String[]{path}, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            cursor.close();
+            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ""+id);
+        }
+        else if (file.exists()) {
+                ContentResolver resolver = getBaseContext().getContentResolver();
+                Uri picCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
+                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg");
+                String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver";
+                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
+                contentValues.put(MediaStore.Images.Media.IS_PENDING, 1);
+                Uri imageUri = resolver.insert(picCollection, contentValues);
+                contentValues.clear();
+                contentValues.put(MediaStore.Images.Media.IS_PENDING, 0);
+                return imageUri;
+            }
+            else {
+                return null;
+            }
     }
 
     private void shareImage() {

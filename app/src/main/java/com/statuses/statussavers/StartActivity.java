@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 
 import static android.os.Build.VERSION.SDK_INT;
 
@@ -54,7 +57,7 @@ public class StartActivity extends AppCompatActivity {
         letsGo = (Button) findViewById(R.id.letsgo);
         setupLauncher();
         setView();
-        setupOnClickButton();;
+        setupOnClickButton();
     }
 
     private void setView() {
@@ -173,7 +176,7 @@ public class StartActivity extends AppCompatActivity {
 
     private void checkPermission1() {
         if(SDK_INT >= 30) {
-            boolean allowed = Environment.isExternalStorageManager();
+            boolean allowed = readPermission();
             if(allowed) {
                 setPermission1ButtonView();
             }
