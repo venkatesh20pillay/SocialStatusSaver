@@ -27,6 +27,7 @@ import android.os.storage.StorageManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,9 +41,11 @@ public class StartActivity extends AppCompatActivity {
 
     TextView permission1;
     TextView permission2;
+    TextView note;
     Button permission1Button;
     Button permission2Button;
     Button letsGo;
+    ImageView usethisfolder;
     ActivityResultLauncher<Intent> someActivityResultLauncher;
 
 
@@ -52,6 +55,8 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
         permission1 = (TextView) findViewById(R.id.permission1);
         permission2 = (TextView) findViewById(R.id.permission2);
+        note = (TextView) findViewById(R.id.note);
+        usethisfolder = (ImageView) findViewById(R.id.usethisfolder);
         permission1Button = (Button) findViewById(R.id.permission1Button);
         permission2Button = (Button) findViewById(R.id.permission2Button);
         letsGo = (Button) findViewById(R.id.letsgo);
@@ -98,7 +103,9 @@ public class StartActivity extends AppCompatActivity {
 
     private void setPermission2ButtonView() {
         if(SDK_INT >= 30) {
-            permission2.setText("Please give access to Android/Media folder to get all the status");
+            permission2.setText("Please give access to .Statuses folder to get all the status");
+            note.setText("* Make user you are on .Statuses folder, click on use this folder and allow. See image below for reference.");
+            usethisfolder.setImageResource(R.mipmap.usethisfolder);
             boolean allowed = readDataFromPrefs();
             if (allowed) {
                 permission2Button.setText("Done");
@@ -113,6 +120,8 @@ public class StartActivity extends AppCompatActivity {
         else {
             permission2Button.setVisibility(View.GONE);
             permission2.setVisibility(View.GONE);
+            usethisfolder.setVisibility(View.GONE);
+            note.setVisibility(View.GONE);
         }
     }
 

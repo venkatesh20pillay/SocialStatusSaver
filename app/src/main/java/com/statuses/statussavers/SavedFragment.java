@@ -148,12 +148,6 @@ public class SavedFragment extends Fragment {
         String targetpath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Status Saver";
         File targetdir = new File(targetpath);
         files = targetdir.listFiles();
-//        if(files == null) {
-//            //   String targetpath1 = "/storage/emulated/0"
-//            String targetpath1 = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/media/com.whatsapp/WhatsApp/Media/.Statuses";
-//            File targetdir1 = new File(targetpath1);
-//            files = targetdir1.listFiles();
-//        }
         if(files != null) {
             for (int i = 0; i < files.length; i++) {
                 File file = files[i];
@@ -164,7 +158,7 @@ public class SavedFragment extends Fragment {
             }
         }
 
-        String targetpath1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/StatusSaver";
+        String targetpath1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Status Saver";
         File targetdir1 = new File(targetpath1);
         File [] files1= targetdir1.listFiles();
         if(files1 != null) {

@@ -75,7 +75,7 @@ public class Picture extends AppCompatActivity {
         File destpath2 = new File(destpath);
         File file1 = new File(file);
         if(show.equalsIgnoreCase("delete")) {
-            if (SDK_INT == 29 || file1.getAbsolutePath().contains("Status Saver")) {
+            if (!file1.getAbsolutePath().contains("Pictures/Status Saver")) {
                 download.setVisibility(View.GONE);
             }
             else {
@@ -94,8 +94,7 @@ public class Picture extends AppCompatActivity {
                             if (SDK_INT < 30) {
                                 org.apache.commons.io.FileUtils.copyFileToDirectory(file1, destpath2);
                             } else {
-                                String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
-                                File imagesFolder = new File(directoryPath, "/StatusSaver");
+                                File imagesFolder = file1;
                                 if (!imagesFolder.exists()) {
                                     imagesFolder.mkdirs();
                                 }
@@ -104,7 +103,7 @@ public class Picture extends AppCompatActivity {
                                 ContentValues contentValues = new ContentValues();
                                 contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
                                 contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg");
-                                String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver";
+                                String directoryPath1 = Environment.DIRECTORY_PICTURES + "/Status Saver";
                                 contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
                                 Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
                                 OutputStream fos = resolver.openOutputStream(Objects.requireNonNull(imageUri));
@@ -125,9 +124,7 @@ public class Picture extends AppCompatActivity {
                             }
                             else {
                                 try {
-                                    String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver" + "/" +filename;
-                                    File f = new File(directoryPath1);
-                                    org.apache.commons.io.FileUtils.delete(f);
+                                    org.apache.commons.io.FileUtils.delete(file1);
                                     Toast toast = Toast.makeText(getApplicationContext(), "Image deleted", Toast.LENGTH_SHORT);
                                     toast.show();
                                     finish();

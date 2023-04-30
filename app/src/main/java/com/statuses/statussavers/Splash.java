@@ -59,14 +59,23 @@ public class Splash extends AppCompatActivity {
     }
 
     private Boolean readPermission() {
-        SharedPreferences sh = Splash.this.getSharedPreferences("PERMISSION", Context.MODE_PRIVATE);
-        String uri = sh.getString("readwrite", "");
-        if(uri!=null) {
-            if (uri.isEmpty()) {
+        if (SDK_INT <=29) {
+            if (ContextCompat.checkSelfPermission(Splash.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            }
+            else {
                 return false;
             }
+        } else {
+            SharedPreferences sh = Splash.this.getSharedPreferences("PERMISSION", Context.MODE_PRIVATE);
+            String uri = sh.getString("readwrite", "");
+            if (uri != null) {
+                if (uri.isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
         }
-        return true;
     }
 
     private Boolean readDataFromPrefs() {

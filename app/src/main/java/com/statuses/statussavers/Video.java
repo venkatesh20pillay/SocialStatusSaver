@@ -71,12 +71,17 @@ public class Video extends AppCompatActivity {
         String uri = intent.getStringExtra("URI_VIDEO");
         String filename = intent.getStringExtra("FILENAME_VIDEO");
         String show = intent.getStringExtra("show");
-        if(show.equalsIgnoreCase("delete")) {
-            download.setImageResource(R.mipmap.delete);
-        }
-
         File destpath2 = new File(destpath);
         File file1 = new File(file);
+
+        if(show.equalsIgnoreCase("delete")) {
+            if (!file1.getAbsolutePath().contains("Pictures/Status Saver")) {
+                download.setVisibility(View.GONE);
+            }
+            else {
+                download.setImageResource(R.mipmap.delete);
+            }
+        }
 
         MediaController mediaController = new MediaController(this);
         mediaController.setMediaPlayer(mparticularvideo);
@@ -95,8 +100,7 @@ public class Video extends AppCompatActivity {
                         if (SDK_INT < 30) {
                             org.apache.commons.io.FileUtils.copyFileToDirectory(file1, destpath2);
                         } else {
-                            String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
-                            File imagesFolder = new File(directoryPath, "/StatusSaver");
+                            File imagesFolder = file1;
                             if (!imagesFolder.exists()) {
                                 imagesFolder.mkdirs();
                             }
@@ -105,7 +109,7 @@ public class Video extends AppCompatActivity {
                             ContentValues contentValues = new ContentValues();
                             contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
                             contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "videos/mp4");
-                            String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver";
+                            String directoryPath1 = Environment.DIRECTORY_PICTURES + "/Status Saver";
                             contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
                             contentValues.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis()/1000);
                             contentValues.put(MediaStore.Video.Media.DATE_TAKEN, System.currentTimeMillis());

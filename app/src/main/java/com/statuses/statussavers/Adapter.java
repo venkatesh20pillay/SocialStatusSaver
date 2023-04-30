@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
@@ -53,9 +54,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             public void onClick(View v) {
                 if(modelClass.getUri().toString().endsWith(".mp4")) {
                     final String path = fileslist.get(position).getPath();
-                    String destpath = Environment.getExternalStorageDirectory().getAbsolutePath()+Constant.SAVE_FOLDER_NAME;
+                    String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+                    File imagesFolder = new File(directoryPath, "/Status Saver");
                     Intent intent = new Intent(context, Video.class);
-                    intent.putExtra("DEST_PATH_VIDEO", destpath);
+                    intent.putExtra("DEST_PATH_VIDEO", imagesFolder.getAbsolutePath());
                     intent.putExtra("FILE_VIDEO", path);
                     intent.putExtra("FILENAME_VIDEO", modelClass.getFilename());
                     intent.putExtra("URI_VIDEO", modelClass.getUri().toString());
@@ -68,9 +70,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 }
                 else {
                     final String path = fileslist.get(position).getPath();
-                    String destpath = Environment.getExternalStorageDirectory().getAbsolutePath()+Constant.SAVE_FOLDER_NAME;
+                    String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+                    File imagesFolder = new File(directoryPath, "/Status Saver");
                     Intent intent = new Intent(context, Picture.class);
-                    intent.putExtra("DEST_PATH", destpath);
+                    intent.putExtra("DEST_PATH", imagesFolder.getAbsolutePath());
                     intent.putExtra("FILE", path);
                     intent.putExtra("FILENAME_IMAGE", modelClass.getFilename());
                     intent.putExtra("URI_IMAGE", modelClass.getUri().toString());
