@@ -39,6 +39,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -56,6 +60,7 @@ public class ImagesFragment extends Fragment {
     ActivityResultLauncher<Intent> someActivityResultLauncher;
     ArrayList<ModelClass> fileslist = new ArrayList<>();
     TextView placeholder;
+    AdView imagesAdview;
 
     @Nullable
     @org.jetbrains.annotations.Nullable
@@ -66,10 +71,18 @@ public class ImagesFragment extends Fragment {
         refreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe);
         refreshLayout2 = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout_emptyView);
         placeholder = (TextView) root.findViewById(R.id.empty_view);
+        imagesAdview = (AdView) root.findViewById(R.id.imagesAdView);
         setupOnClickText();
         setRefresh();
         setuplayout();
+        setbannerAd();
         return root;
+    }
+
+    private void setbannerAd() {
+        MobileAds.initialize(getContext());
+        AdRequest adRequest = new AdRequest.Builder().build();
+        imagesAdview.loadAd(adRequest);
     }
 
     @Override
