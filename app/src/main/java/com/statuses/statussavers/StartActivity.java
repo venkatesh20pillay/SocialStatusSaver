@@ -171,10 +171,9 @@ public class StartActivity extends AppCompatActivity {
         permission1Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (permission1Button.getText().toString().equalsIgnoreCase("Click Here")) {
-//                    checkPermission1();
-//                }
-                setbannerAd();
+                if (permission1Button.getText().toString().equalsIgnoreCase("Click Here")) {
+                    checkPermission1();
+                }
             }
         });
         permission2Button.setOnClickListener(new View.OnClickListener() {

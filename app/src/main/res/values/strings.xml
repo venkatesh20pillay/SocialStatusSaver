@@ -14,4 +14,7 @@
     <string name="app_id">ca-app-pub-4746738763099699~8237704869</string>
     <string name="image_fragment_banner_id">ca-app-pub-4746738763099699/3324121939</string>
     <string name="start_screen_banner_id">ca-app-pub-4746738763099699/3718927506</string>
+    <string name="video_fragment_banner_id">ca-app-pub-4746738763099699/3573202244</string>
+    <string name="saved_fragment_banner_id">ca-app-pub-4746738763099699/6589467574</string>
+    <string name="picture_iterstitial_id">ca-app-pub-4746738763099699/4905206032</string>
 </resources>

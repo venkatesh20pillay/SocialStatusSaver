@@ -31,6 +31,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -46,34 +57,113 @@ public class SavedFragment extends Fragment {
     SwipeRefreshLayout refreshLayout;
     ActivityResultLauncher<Intent> someActivityResultLauncher;
     ArrayList<ModelClass> fileslist = new ArrayList<>();
-    BroadcastReceiver broadcastReceiver;
     SwipeRefreshLayout refreshLayout2;
     TextView placeholder;
+    AdView savedAdview;
+    private InterstitialAd mInterstitialAd;
 
     @Nullable
     @org.jetbrains.annotations.Nullable
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.videosfragment_layout, null);
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.savedfragment_layout, null);
         recyclerView = (RecyclerView) root.findViewById(R.id.recyclerview);
         refreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe);
         placeholder = (TextView) root.findViewById(R.id.empty_view);
         refreshLayout2 = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout_emptyView);
+        savedAdview = (AdView) root.findViewById(R.id.savedAdView);
         setupOnClickText();
-        setupReciever();
         setupLauncher();
-        checkPermission();
         setRefresh();
         setRefresh2();
+        setbannerAd();
+        setuplayout();
+        initialiseAd();
+        showFullAd();
         return root;
+    }
+
+    private void setbannerAd() {
+        MobileAds.initialize(getContext());
+        AdRequest adRequest = new AdRequest.Builder().build();
+        if (savedAdview != null) {
+            savedAdview.loadAd(adRequest);
+        }
+    }
+
+    private void initialiseAd() {
+        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(@NonNull @NotNull InitializationStatus initializationStatus) {
+
+            }
+        });
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(getContext(), "ca-app-pub-4746738763099699/1350772709", adRequest, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                mInterstitialAd = null;
+            }
+
+            @Override
+            public void onAdLoaded(@NonNull @NotNull InterstitialAd interstitialAd) {
+                super.onAdLoaded(interstitialAd);
+                mInterstitialAd = interstitialAd;
+            }
+        });
+    }
+
+    private void showFullAd() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showInterstitialAd();
+            }
+        }, 70000);
+    }
+
+    private void showInterstitialAd() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                @Override
+                public void onAdClicked() {
+                    super.onAdClicked();
+                }
+
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    super.onAdDismissedFullScreenContent();
+                    mInterstitialAd = null;
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(@NonNull @NotNull AdError adError) {
+                    super.onAdFailedToShowFullScreenContent(adError);
+                    mInterstitialAd = null;
+                }
+
+                @Override
+                public void onAdImpression() {
+                    super.onAdImpression();
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    super.onAdShowedFullScreenContent();
+                }
+            });
+            mInterstitialAd.show(getActivity());
+        }
     }
 
     private void setRefresh() {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                setuplayout();
                 refreshLayout.setRefreshing(true);
-                checkPermission();
                 {
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -91,7 +181,6 @@ public class SavedFragment extends Fragment {
             @Override
             public void onRefresh() {
                 refreshLayout2.setRefreshing(true);
-                checkPermission();
                 {
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -102,20 +191,6 @@ public class SavedFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private void setupReciever() {
-
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                // Get extra data included in the Intent
-                String message = intent.getStringExtra("message");
-                setuplayout();
-            }
-        };
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver,
-                new IntentFilter("custom-event-name"));
     }
 
     private void setuplayout() {
@@ -177,6 +252,7 @@ public class SavedFragment extends Fragment {
         }
         else {
             refreshLayout2.setVisibility(View.VISIBLE);
+            refreshLayout.setVisibility(View.GONE);
             placeholder.setText(getString(R.string.nosavedstatus));
         }
 
@@ -191,9 +267,6 @@ public class SavedFragment extends Fragment {
                 if(str.equalsIgnoreCase(getString(R.string.nosavedstatus))) {
                     openHowToUse();
                 }
-                else {
-                    checkPermission();
-                }
             }
         });
     }
@@ -203,32 +276,4 @@ public class SavedFragment extends Fragment {
         startActivity(intent);
     }
 
-    private void checkPermission() {
-
-        if(SDK_INT >= 30) {
-            boolean allowed = Environment.isExternalStorageManager();
-            if(allowed) {
-                setuplayout();
-            }
-            else {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-
-            }
-        }
-        else {
-            if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED) {
-                setuplayout();
-            }
-            else {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-            }
-        }
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        setuplayout();
-    }
 }
