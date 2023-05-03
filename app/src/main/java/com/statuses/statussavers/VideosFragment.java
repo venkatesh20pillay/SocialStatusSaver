@@ -150,6 +150,7 @@ public class VideosFragment extends Fragment {
         refreshLayout2.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                setuplayout();
                 refreshLayout2.setRefreshing(true);
                 {
                     new Handler().postDelayed(new Runnable() {
