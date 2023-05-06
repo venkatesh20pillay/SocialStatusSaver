@@ -17,4 +17,8 @@
     <string name="video_fragment_banner_id">ca-app-pub-4746738763099699/3573202244</string>
     <string name="saved_fragment_banner_id">ca-app-pub-4746738763099699/6589467574</string>
     <string name="picture_iterstitial_id">ca-app-pub-4746738763099699/4905206032</string>
+    <string name="demo">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="demointerstitial">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="title_activity_reward">RewardActivity</string>
+    <string name="rewardDescription"><ul><li>Watch full ad to earn this reward.</li>\n\n<li>All ads will be removed for 2 days.</li>\n\n<li>No ads will be shown on any of the screen.</li></ul></string>
 </resources>
