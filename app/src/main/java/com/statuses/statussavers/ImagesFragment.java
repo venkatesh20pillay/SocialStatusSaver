@@ -84,9 +84,9 @@ public class ImagesFragment extends Fragment {
         setupOnClickText();
         setRefresh();
         setuplayout();
-        setbannerAd();
-        initialiseAd();
-        showFullAd();
+//        setbannerAd();
+//        initialiseAd();
+//        showFullAd();
         return root;
     }
 
@@ -97,7 +97,7 @@ public class ImagesFragment extends Fragment {
             public void run() {
                 showInterstitialAd();
             }
-        }, 15000);
+        }, 10000);
     }
 
     private void setbannerAd() {
@@ -140,6 +140,10 @@ public class ImagesFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
     private void initialiseAd() {
         MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
@@ -149,7 +153,7 @@ public class ImagesFragment extends Fragment {
             }
         });
         AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(getContext(), "ca-app-pub-4746738763099699/2967106703", adRequest, new InterstitialAdLoadCallback() {
+        InterstitialAd.load(getContext(), "ca-app-pub-3940256099942544/1033173712", adRequest, new InterstitialAdLoadCallback() {
             @Override
             public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);

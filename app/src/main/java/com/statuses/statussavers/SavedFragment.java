@@ -76,10 +76,10 @@ public class SavedFragment extends Fragment {
         setupLauncher();
         setRefresh();
         setRefresh2();
-        setbannerAd();
+        //setbannerAd();
         setuplayout();
-        initialiseAd();
-        showFullAd();
+//        initialiseAd();
+//        showFullAd();
         return root;
     }
 
@@ -204,6 +204,11 @@ public class SavedFragment extends Fragment {
         adapter = new Adapter(getActivity(), getData(), false);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     protected void setupLauncher() {

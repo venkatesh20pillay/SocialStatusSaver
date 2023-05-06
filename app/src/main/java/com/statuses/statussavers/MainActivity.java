@@ -9,6 +9,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
@@ -37,6 +47,9 @@ import static android.os.Build.VERSION.SDK_INT;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private AdView mainAdView;
+    private InterstitialAd mInterstitialAd;
+    private static int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
+        mainAdView = (AdView) findViewById(R.id.mainAdView);
         tabs.setupWithViewPager(viewPager);
+        setbannerAd();
+        initialiseAd();
     }
 
     @Override
@@ -60,11 +76,89 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        MainActivity.count += 1;
+        if (MainActivity.count >= 2 && (MainActivity.count - 2) % 6 == 0) {
+            initialiseAd();
+        } else if (MainActivity.count >= 6 && MainActivity.count % 6 == 0) {
+            showInterstitialAd();
+        }
+    }
+
+    private void initialiseAd() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(@NonNull @NotNull InitializationStatus initializationStatus) {
+
+            }
+        });
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequest, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                mInterstitialAd = null;
+            }
+
+            @Override
+            public void onAdLoaded(@NonNull @NotNull InterstitialAd interstitialAd) {
+                super.onAdLoaded(interstitialAd);
+                mInterstitialAd = interstitialAd;
+            }
+        });
+    }
+
+    private void showInterstitialAd() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                @Override
+                public void onAdClicked() {
+                    super.onAdClicked();
+                }
+
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    super.onAdDismissedFullScreenContent();
+                    mInterstitialAd = null;
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(@NonNull @NotNull AdError adError) {
+                    super.onAdFailedToShowFullScreenContent(adError);
+                    mInterstitialAd = null;
+                }
+
+                @Override
+                public void onAdImpression() {
+                    super.onAdImpression();
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    super.onAdShowedFullScreenContent();
+                }
+            });
+            mInterstitialAd.show(this);
+        }
+    }
+
+    private void setbannerAd() {
+        MobileAds.initialize(this);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mainAdView.loadAd(adRequest);
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         switch(id) {
             case R.id.howtouse:
                 openHowToUse();
+                return true;
+            case R.id.reward:
+                openRewardScreen();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -73,6 +167,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void openHowToUse() {
         Intent intent = new Intent(this, HowToUse.class);
+        startActivity(intent);
+    }
+
+    private void openRewardScreen() {
+        Intent intent = new Intent(this, RewardActivity.class);
         startActivity(intent);
     }
 }

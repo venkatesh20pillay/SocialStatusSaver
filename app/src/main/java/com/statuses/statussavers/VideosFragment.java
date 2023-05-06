@@ -78,9 +78,9 @@ public class VideosFragment extends Fragment {
         setRefresh();
         setRefresh2();
         setuplayout();
-        setbannerAd();
-        initialiseAd();
-        showFullAd();
+//        setbannerAd();
+//        initialiseAd();
+//        showFullAd();
         return root;
     }
 
@@ -91,7 +91,7 @@ public class VideosFragment extends Fragment {
             public void run() {
                 showInterstitialAd();
             }
-        }, 45000);
+        }, 10000);
     }
 
     private void initialiseAd() {
@@ -102,7 +102,7 @@ public class VideosFragment extends Fragment {
             }
         });
         AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(getContext(), "ca-app-pub-4746738763099699/4480295088", adRequest, new InterstitialAdLoadCallback() {
+        InterstitialAd.load(getContext(), "ca-app-pub-3940256099942544/1033173712", adRequest, new InterstitialAdLoadCallback() {
             @Override
             public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
@@ -271,6 +271,11 @@ public class VideosFragment extends Fragment {
             });
             mInterstitialAd.show(getActivity());
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     private void openHowToUse() {

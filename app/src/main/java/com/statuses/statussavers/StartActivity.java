@@ -68,7 +68,7 @@ public class StartActivity extends AppCompatActivity {
         setupLauncher();
         setView();
         setupOnClickButton();
-        setbannerAd();
+        //setbannerAd();
     }
 
     private void setView() {
