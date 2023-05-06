@@ -79,9 +79,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         MainActivity.count += 1;
-        if (MainActivity.count >= 2 && (MainActivity.count - 2) % 6 == 0) {
+        if (MainActivity.count == 2) {
             initialiseAd();
-        } else if (MainActivity.count >= 6 && MainActivity.count % 6 == 0) {
+        } else if (MainActivity.count == 5) {
             showInterstitialAd();
         }
     }
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequest, new InterstitialAdLoadCallback() {
+        InterstitialAd.load(this, "ca-app-pub-4746738763099699/2967106703", adRequest, new InterstitialAdLoadCallback() {
             @Override
             public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
@@ -157,9 +157,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.howtouse:
                 openHowToUse();
                 return true;
-            case R.id.reward:
-                openRewardScreen();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -167,11 +164,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void openHowToUse() {
         Intent intent = new Intent(this, HowToUse.class);
-        startActivity(intent);
-    }
-
-    private void openRewardScreen() {
-        Intent intent = new Intent(this, RewardActivity.class);
         startActivity(intent);
     }
 }
