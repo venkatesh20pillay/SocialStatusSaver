@@ -31,6 +31,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -47,7 +51,7 @@ public class StartActivity extends AppCompatActivity {
     Button letsGo;
     ImageView usethisfolder;
     ActivityResultLauncher<Intent> someActivityResultLauncher;
-
+    AdView adview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +64,23 @@ public class StartActivity extends AppCompatActivity {
         permission1Button = (Button) findViewById(R.id.permission1Button);
         permission2Button = (Button) findViewById(R.id.permission2Button);
         letsGo = (Button) findViewById(R.id.letsgo);
+        adview = (AdView) findViewById(R.id.adview);
         setupLauncher();
         setView();
         setupOnClickButton();
+        setbannerAd();
     }
 
     private void setView() {
         setPermission1ButtonView();
         setPermission2ButtonView();
         setLetsGoView();
+    }
+
+    private void setbannerAd() {
+        MobileAds.initialize(this);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adview.loadAd(adRequest);
     }
 
     private void setLetsGoView() {
