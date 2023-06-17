@@ -1,13 +1,29 @@
 package com.statuses.statussavers;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -15,6 +31,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.storage.StorageManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -30,6 +47,9 @@ import static android.os.Build.VERSION.SDK_INT;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private AdView mainAdView;
+    private InterstitialAd mInterstitialAd;
+    private static int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,29 +58,14 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
-        //actionBar = getSupportActionBar();
-//        if(getSupportActionBar()!=null) {
-//            getSupportActionBar().hide();
-//        }
-
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
+        mainAdView = (AdView) findViewById(R.id.mainAdView);
         tabs.setupWithViewPager(viewPager);
-    }
-
-    private void checkPermission() {
-
-        if(SDK_INT>23) {
-            if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED) {
-
-            }
-            else {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            }
-        }
-
+        setbannerAd();
+        initialiseAd();
     }
 
     @Override
@@ -69,6 +74,81 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.top_bar_menu, menu);
         return true;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MainActivity.count += 1;
+        if (MainActivity.count == 2) {
+            initialiseAd();
+        } else if (MainActivity.count == 5) {
+            showInterstitialAd();
+        }
+    }
+
+    private void initialiseAd() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(@NonNull @NotNull InitializationStatus initializationStatus) {
+
+            }
+        });
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(this, "ca-app-pub-4746738763099699/2967106703", adRequest, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                mInterstitialAd = null;
+            }
+
+            @Override
+            public void onAdLoaded(@NonNull @NotNull InterstitialAd interstitialAd) {
+                super.onAdLoaded(interstitialAd);
+                mInterstitialAd = interstitialAd;
+            }
+        });
+    }
+
+    private void showInterstitialAd() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                @Override
+                public void onAdClicked() {
+                    super.onAdClicked();
+                }
+
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    super.onAdDismissedFullScreenContent();
+                    mInterstitialAd = null;
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(@NonNull @NotNull AdError adError) {
+                    super.onAdFailedToShowFullScreenContent(adError);
+                    mInterstitialAd = null;
+                }
+
+                @Override
+                public void onAdImpression() {
+                    super.onAdImpression();
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    super.onAdShowedFullScreenContent();
+                }
+            });
+            mInterstitialAd.show(this);
+        }
+    }
+
+    private void setbannerAd() {
+        MobileAds.initialize(this);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mainAdView.loadAd(adRequest);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -85,31 +165,5 @@ public class MainActivity extends AppCompatActivity {
     private void openHowToUse() {
         Intent intent = new Intent(this, HowToUse.class);
         startActivity(intent);
-    }
-
-    private void shareApp() {
-        try {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name");
-            String shareMessage= "Let me recommend you this application\n\n";
-            shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID +"\n\n";
-            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
-            startActivity(Intent.createChooser(shareIntent, "choose one"));
-        } catch(Exception e) {
-            //e.toString();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if(grantResults.length > 1 &&grantResults[0]==0 && grantResults[1]==0) {
-            Intent intent = new Intent("custom-event-name");
-            // You can also include some extra data.
-            intent.putExtra("message", "This is my message!");
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        }
     }
 }
