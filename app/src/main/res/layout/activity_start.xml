@@ -117,6 +117,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:adSize="BANNER"
-        app:adUnitId="ca-app-pub-3940256099942544/6300978111"/>
+        app:adUnitId="@string/start_screen_banner_id"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
