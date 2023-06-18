@@ -12,12 +12,16 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MoreActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private CardView cardView;
+    private AdView moreAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +29,10 @@ public class MoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_more);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationViewMore);
         cardView = (CardView) findViewById(R.id.cardView);
+        moreAdView = (AdView) findViewById(R.id.moreAdView);
         setupBottomBar();
         setupCardView();
+        setbannerAd();
     }
 
     private void setupCardView() {
@@ -64,6 +70,12 @@ public class MoreActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    private void setbannerAd() {
+        MobileAds.initialize(this);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        moreAdView.loadAd(adRequest);
     }
 
     private void openHomeActivity() {
