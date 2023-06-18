@@ -19,6 +19,7 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
@@ -50,22 +51,43 @@ public class MainActivity extends AppCompatActivity {
     private AdView mainAdView;
     private InterstitialAd mInterstitialAd;
     private static int count = 0;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-
         setContentView(binding.getRoot());
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
         mainAdView = (AdView) findViewById(R.id.mainAdView);
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
         tabs.setupWithViewPager(viewPager);
         setbannerAd();
         initialiseAd();
+        setupBottomBar();
+    }
+
+    private void setupBottomBar() {
+        bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch(item.getItemId())
+                {
+                    case R.id.home:
+                        return true;
+                    case R.id.more:
+                        openMoreActivity();
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -78,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.home);
         MainActivity.count += 1;
         if (MainActivity.count == 2) {
             initialiseAd();
@@ -94,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(this, "ca-app-pub-4746738763099699/2967106703", adRequest, new InterstitialAdLoadCallback() {
+        InterstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequest, new InterstitialAdLoadCallback() {
             @Override
             public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
@@ -165,5 +188,16 @@ public class MainActivity extends AppCompatActivity {
     private void openHowToUse() {
         Intent intent = new Intent(this, HowToUse.class);
         startActivity(intent);
+    }
+
+    private void openMoreActivity() {
+        bottomNavigationView.setSelectedItemId(R.id.home);
+        Intent intent = new Intent(this, MoreActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }
