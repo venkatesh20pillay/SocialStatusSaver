@@ -28,12 +28,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.unity3d.ads.UnityAds;
+import com.unity3d.services.banners.BannerView;
+import com.unity3d.services.banners.UnityBannerSize;
+import com.unity3d.services.banners.UnityBanners;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +57,10 @@ public class StartActivity extends AppCompatActivity {
     Button letsGo;
     ImageView usethisfolder;
     ActivityResultLauncher<Intent> someActivityResultLauncher;
-    AdView adview;
+   // AdView adview;
+    private String game_id = "5328321";
+    private String banner_id = "Banner_Android";
+    LinearLayout bannerAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +73,21 @@ public class StartActivity extends AppCompatActivity {
         permission1Button = (Button) findViewById(R.id.permission1Button);
         permission2Button = (Button) findViewById(R.id.permission2Button);
         letsGo = (Button) findViewById(R.id.letsgo);
-        adview = (AdView) findViewById(R.id.adview);
+        bannerAd = (LinearLayout) findViewById(R.id.banner);
+        //adview = (AdView) findViewById(R.id.adview);
         setupLauncher();
         setView();
         setupOnClickButton();
-        setbannerAd();
+        setupBannerAd();
+        //setbannerAd();
     }
 
+    private void setupBannerAd() {
+        UnityAds.initialize(this, game_id, true);
+        BannerView view = new BannerView(this, banner_id, new UnityBannerSize(320,50));
+        view.load();
+        bannerAd.addView(view);
+    }
     private void setView() {
         setPermission1ButtonView();
         setPermission2ButtonView();
@@ -78,9 +95,9 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void setbannerAd() {
-        MobileAds.initialize(this);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adview.loadAd(adRequest);
+//        MobileAds.initialize(this);
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        adview.loadAd(adRequest);
     }
 
     private void setLetsGoView() {
