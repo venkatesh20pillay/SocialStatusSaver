@@ -83,7 +83,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void setupBannerAd() {
-        UnityAds.initialize(this, game_id, true);
+        UnityAds.initialize(this, game_id, false);
         BannerView view = new BannerView(this, banner_id, new UnityBannerSize(320,50));
         view.load();
         bannerAd.addView(view);
