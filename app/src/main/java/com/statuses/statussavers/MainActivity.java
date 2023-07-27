@@ -1,6 +1,8 @@
 package com.statuses.statussavers;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,6 +27,7 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -35,6 +38,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.storage.StorageManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.statuses.statussavers.ui.main.SectionsPagerAdapter;
 import com.statuses.statussavers.databinding.ActivityMainBinding;
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private InterstitialAd mInterstitialAd;
     private static int count = 0;
     private BottomNavigationView bottomNavigationView;
+    private Dialog myDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +73,43 @@ public class MainActivity extends AppCompatActivity {
         mainAdView = (AdView) findViewById(R.id.mainAdView);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
         tabs.setupWithViewPager(viewPager);
-        setbannerAd();
-        initialiseAd();
+//        setbannerAd();
+//        initialiseAd();
         setupBottomBar();
     }
 
+    private void showPopup() {
+        TextView txtClose;
+        ImageView popupImage;
+        myDialog = new Dialog(this);
+        myDialog.setContentView(R.layout.popup_layout);
+        myDialog.setCanceledOnTouchOutside(false);
+        txtClose = (TextView) myDialog.findViewById(R.id.close);
+        popupImage = (ImageView) myDialog.findViewById(R.id.popupimage);
+        txtClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDialog.dismiss();
+            }
+        });
+        popupImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDialog.dismiss();
+                String url = "https://860.game.qureka.com";
+                try {
+                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                    CustomTabsIntent customTabsIntent = builder.build();
+                    customTabsIntent.launchUrl(MainActivity.this, Uri.parse(url));
+                }
+                catch (ActivityNotFoundException e) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+                }
+            }
+        });
+        myDialog.show();
+    }
     private void setupBottomBar() {
         bottomNavigationView.setSelectedItemId(R.id.home);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -103,9 +142,11 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.home);
         MainActivity.count += 1;
         if (MainActivity.count == 2) {
-            initialiseAd();
+            //initialiseAd();
         } else if (MainActivity.count == 5) {
-            showInterstitialAd();
+            //showInterstitialAd();
+        } else if (MainActivity.count == 3) {
+            showPopup();
         }
     }
 
