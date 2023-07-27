@@ -73,8 +73,7 @@ public class MainActivity extends AppCompatActivity {
         mainAdView = (AdView) findViewById(R.id.mainAdView);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
         tabs.setupWithViewPager(viewPager);
-//        setbannerAd();
-//        initialiseAd();
+        setbannerAd();
         setupBottomBar();
     }
 
@@ -142,9 +141,9 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.home);
         MainActivity.count += 1;
         if (MainActivity.count == 2) {
-            //initialiseAd();
+            initialiseAd();
         } else if (MainActivity.count == 5) {
-            //showInterstitialAd();
+            showInterstitialAd();
         } else if (MainActivity.count == 3) {
             showPopup();
         }
