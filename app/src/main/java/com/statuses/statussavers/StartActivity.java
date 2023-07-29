@@ -25,12 +25,24 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.applovin.mediation.MaxAd;
+import com.applovin.mediation.MaxAdReviewListener;
+import com.applovin.mediation.MaxAdViewAdListener;
+import com.applovin.mediation.MaxError;
+import com.applovin.mediation.ads.MaxAdView;
+import com.applovin.sdk.AppLovinAd;
+import com.applovin.sdk.AppLovinSdk;
+import com.applovin.sdk.AppLovinSdkConfiguration;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -51,7 +63,8 @@ public class StartActivity extends AppCompatActivity {
     Button letsGo;
     ImageView usethisfolder;
     ActivityResultLauncher<Intent> someActivityResultLauncher;
-    AdView adview;
+    //AdView adview;
+    MaxAdView maxAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +77,68 @@ public class StartActivity extends AppCompatActivity {
         permission1Button = (Button) findViewById(R.id.permission1Button);
         permission2Button = (Button) findViewById(R.id.permission2Button);
         letsGo = (Button) findViewById(R.id.letsgo);
-        adview = (AdView) findViewById(R.id.adview);
+        //adview = (AdView) findViewById(R.id.adview);
         setupLauncher();
         setView();
         setupOnClickButton();
-        setbannerAd();
+        setApplovin();
+        //setbannerAd();
+    }
+
+    private void setApplovin() {
+        AppLovinSdk.getInstance(this).setMediationProvider("max");
+        AppLovinSdk.initializeSdk(this, new AppLovinSdk.SdkInitializationListener() {
+            @Override
+            public void onSdkInitialized(AppLovinSdkConfiguration appLovinSdkConfiguration) {
+                loadAppLovinAd();
+            }
+        });
+    }
+
+    private void loadAppLovinAd() {
+        maxAdView = (MaxAdView) findViewById(R.id.maxAd);
+        maxAdView.setListener(new MaxAdViewAdListener() {
+            @Override
+            public void onAdExpanded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdCollapsed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoaded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdDisplayed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdHidden(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdClicked(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoadFailed(String s, MaxError maxError) {
+
+            }
+
+            @Override
+            public void onAdDisplayFailed(MaxAd maxAd, MaxError maxError) {
+
+            }
+        });
+        maxAdView.loadAd();
     }
 
     private void setView() {
@@ -80,7 +150,7 @@ public class StartActivity extends AppCompatActivity {
     private void setbannerAd() {
         MobileAds.initialize(this);
         AdRequest adRequest = new AdRequest.Builder().build();
-        adview.loadAd(adRequest);
+        //adview.loadAd(adRequest);
     }
 
     private void setLetsGoView() {
