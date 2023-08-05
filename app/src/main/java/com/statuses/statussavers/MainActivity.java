@@ -11,6 +11,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.applovin.mediation.MaxAd;
+import com.applovin.mediation.MaxAdViewAdListener;
+import com.applovin.mediation.MaxError;
+import com.applovin.mediation.ads.MaxAdView;
+import com.applovin.sdk.AppLovinSdk;
+import com.applovin.sdk.AppLovinSdkConfiguration;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -59,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private static int count = 0;
     private BottomNavigationView bottomNavigationView;
     private Dialog myDialog;
+    MaxAdView maxAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +77,69 @@ public class MainActivity extends AppCompatActivity {
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
-        mainAdView = (AdView) findViewById(R.id.mainAdView);
+        //mainAdView = (AdView) findViewById(R.id.mainAdView);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
         tabs.setupWithViewPager(viewPager);
-        setbannerAd();
+        //setbannerAd();
 //        initialiseAd();
         setupBottomBar();
+        setApplovin();
+    }
+
+    private void setApplovin() {
+        AppLovinSdk.getInstance(this).setMediationProvider("max");
+        AppLovinSdk.initializeSdk(this, new AppLovinSdk.SdkInitializationListener() {
+            @Override
+            public void onSdkInitialized(AppLovinSdkConfiguration appLovinSdkConfiguration) {
+                loadAppLovinAd();
+            }
+        });
+    }
+
+    private void loadAppLovinAd() {
+        maxAdView = (MaxAdView) findViewById(R.id.maxAd1);
+        maxAdView.setListener(new MaxAdViewAdListener() {
+            @Override
+            public void onAdExpanded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdCollapsed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoaded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdDisplayed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdHidden(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdClicked(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoadFailed(String s, MaxError maxError) {
+
+            }
+
+            @Override
+            public void onAdDisplayFailed(MaxAd maxAd, MaxError maxError) {
+
+            }
+        });
+        maxAdView.loadAd();
     }
 
     private void showPopup() {
