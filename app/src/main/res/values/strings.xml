@@ -22,4 +22,5 @@
     <string name="more_screen_banner_id">ca-app-pub-4746738763099699/3421401220</string>
     <string name="applovin_banner_id">45a001d2724272b4</string>
     <string name="applovin_main_screen_banner_id">ef30653e5eef9e2d</string>
+    <string name="applovin_interstitial_id">af63f34ee8ec7860</string>
 </resources>

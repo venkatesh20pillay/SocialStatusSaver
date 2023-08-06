@@ -12,9 +12,11 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.applovin.mediation.MaxAd;
+import com.applovin.mediation.MaxAdListener;
 import com.applovin.mediation.MaxAdViewAdListener;
 import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
+import com.applovin.mediation.ads.MaxInterstitialAd;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkConfiguration;
 import com.google.android.gms.ads.AdError;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private Dialog myDialog;
     MaxAdView maxAdView;
+    private MaxInterstitialAd interstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +95,47 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSdkInitialized(AppLovinSdkConfiguration appLovinSdkConfiguration) {
                 loadAppLovinAd();
+                loadInterstitialAd();
             }
         });
+    }
+
+    private void loadInterstitialAd() {
+        interstitialAd = new MaxInterstitialAd( "af63f34ee8ec7860", this );
+        interstitialAd.setListener(new MaxAdListener() {
+            @Override
+            public void onAdLoaded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdDisplayed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdHidden(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdClicked(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoadFailed(String s, MaxError maxError) {
+                interstitialAd.loadAd();
+            }
+
+            @Override
+            public void onAdDisplayFailed(MaxAd maxAd, MaxError maxError) {
+
+            }
+        });
+
+        // Load the first ad
+        interstitialAd.loadAd();
     }
 
     private void loadAppLovinAd() {
@@ -206,11 +248,18 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.home);
         MainActivity.count += 1;
         if (MainActivity.count == 2) {
-            initialiseAd();
-        } else if (MainActivity.count == 5) {
-            showInterstitialAd();
+            //initialiseAd();
+        } else if (MainActivity.count == 7) {
+            //showInterstitialAd();
+            showApplovinInterstitialAd();
         } else if (MainActivity.count == 3) {
             showPopup();
+        }
+    }
+
+    private void showApplovinInterstitialAd() {
+        if (interstitialAd.isReady()) {
+            interstitialAd.showAd();
         }
     }
 
