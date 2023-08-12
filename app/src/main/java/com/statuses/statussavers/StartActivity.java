@@ -46,6 +46,10 @@ import com.applovin.sdk.AppLovinSdkConfiguration;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.admanager.AdManagerAdRequest;
+import com.google.android.gms.ads.admanager.AdManagerAdView;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -65,6 +69,7 @@ public class StartActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> someActivityResultLauncher;
     //AdView adview;
     MaxAdView maxAdView;
+    private AdManagerAdView mAdManagerAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +86,18 @@ public class StartActivity extends AppCompatActivity {
         setupLauncher();
         setView();
         setupOnClickButton();
-        setApplovin();
+        //setApplovin();
         //setbannerAd();
+        setupAdx();
+    }
+
+    private void setupAdx() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                setupAdxAd();
+            }
+        });
     }
 
     private void setApplovin() {
@@ -95,8 +110,14 @@ public class StartActivity extends AppCompatActivity {
         });
     }
 
+    private void setupAdxAd() {
+        mAdManagerAdView = findViewById(R.id.bannerAdView);
+        AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
+        mAdManagerAdView.loadAd(adRequest);
+    }
+
     private void loadAppLovinAd() {
-        maxAdView = (MaxAdView) findViewById(R.id.maxAd);
+        //maxAdView = (MaxAdView) findViewById(R.id.maxAd);
         maxAdView.setListener(new MaxAdViewAdListener() {
             @Override
             public void onAdExpanded(MaxAd maxAd) {
