@@ -30,6 +30,11 @@ import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.applovin.mediation.MaxAd;
+import com.applovin.mediation.MaxAdViewAdListener;
+import com.applovin.mediation.MaxError;
+import com.applovin.mediation.ads.MaxAdView;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,6 +51,7 @@ public class Video extends AppCompatActivity {
     ImageView download, share;
     VideoView mparticularvideo;
     Uri uri1;
+    private MaxAdView maxAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +70,9 @@ public class Video extends AppCompatActivity {
                 shareVideo();
             }
         });
-
+        if (MainActivity.sdkInitialized == true) {
+            loadAppLovinAd();
+        }
         Intent intent = getIntent();
         String destpath = intent.getStringExtra("DEST_PATH_VIDEO");
         String file = intent.getStringExtra("FILE_VIDEO");
@@ -153,6 +161,52 @@ public class Video extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void loadAppLovinAd() {
+        maxAdView = (MaxAdView) findViewById(R.id.maxAd2);
+        maxAdView.setListener(new MaxAdViewAdListener() {
+            @Override
+            public void onAdExpanded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdCollapsed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoaded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdDisplayed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdHidden(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdClicked(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoadFailed(String s, MaxError maxError) {
+
+            }
+
+            @Override
+            public void onAdDisplayFailed(MaxAd maxAd, MaxError maxError) {
+
+            }
+        });
+        maxAdView.loadAd();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)

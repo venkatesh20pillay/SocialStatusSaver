@@ -17,6 +17,7 @@ public class AppLovinOpenManager implements LifecycleObserver, MaxAdListener {
     private final Context context;
 
     private final String ADS_UNIT = "259e3b5b492bbc98";
+    private static int count = 0;
 
     public AppLovinOpenManager(final Context context) {
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
@@ -40,7 +41,11 @@ public class AppLovinOpenManager implements LifecycleObserver, MaxAdListener {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onStart() {
-        showAdIfReady();
+        AppLovinOpenManager.count = AppLovinOpenManager.count + 1;
+        if(AppLovinOpenManager.count >= 3) {
+            AppLovinOpenManager.count = 0;
+            showAdIfReady();
+        }
     }
 
     @Override

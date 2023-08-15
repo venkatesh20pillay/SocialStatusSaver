@@ -67,8 +67,9 @@ public class MainActivity extends AppCompatActivity {
     private static int count = 0;
     private BottomNavigationView bottomNavigationView;
     private Dialog myDialog;
-    MaxAdView maxAdView;
+    private MaxAdView maxAdView;
     private MaxInterstitialAd interstitialAd;
+    public static boolean sdkInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         AppLovinSdk.initializeSdk(this, new AppLovinSdk.SdkInitializationListener() {
             @Override
             public void onSdkInitialized(AppLovinSdkConfiguration appLovinSdkConfiguration) {
+                sdkInitialized = true;
                 loadAppLovinAd();
                 loadInterstitialAd();
             }

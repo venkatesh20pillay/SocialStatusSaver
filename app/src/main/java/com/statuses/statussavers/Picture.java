@@ -35,6 +35,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.applovin.mediation.MaxAd;
+import com.applovin.mediation.MaxAdViewAdListener;
+import com.applovin.mediation.MaxError;
+import com.applovin.mediation.ads.MaxAdView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -60,6 +64,7 @@ import static android.os.Build.VERSION.SDK_INT;
 public class Picture extends AppCompatActivity {
 
     ImageView mparticularimage, download, share;
+    private MaxAdView maxAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,13 +81,15 @@ public class Picture extends AppCompatActivity {
                 shareImage();
             }
         });
+        if (MainActivity.sdkInitialized == true) {
+            loadAppLovinAd();
+        }
         Intent intent = getIntent();
         String destpath = intent.getStringExtra("DEST_PATH");
         String file = intent.getStringExtra("FILE");
         String uri = intent.getStringExtra("URI_IMAGE");
         String filename = intent.getStringExtra("FILENAME_IMAGE");
         String show = intent.getStringExtra("show");
-
         File destpath2 = new File(destpath);
         File file1 = new File(file);
         if(show.equalsIgnoreCase("delete")) {
@@ -147,6 +154,52 @@ public class Picture extends AppCompatActivity {
                     }
             }
         });
+    }
+
+    private void loadAppLovinAd() {
+        maxAdView = (MaxAdView) findViewById(R.id.maxAd);
+        maxAdView.setListener(new MaxAdViewAdListener() {
+            @Override
+            public void onAdExpanded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdCollapsed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoaded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdDisplayed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdHidden(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdClicked(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoadFailed(String s, MaxError maxError) {
+
+            }
+
+            @Override
+            public void onAdDisplayFailed(MaxAd maxAd, MaxError maxError) {
+
+            }
+        });
+        maxAdView.loadAd();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)

@@ -23,6 +23,8 @@
     <string name="applovin_banner_id">45a001d2724272b4</string>
     <string name="applovin_main_screen_banner_id">ef30653e5eef9e2d</string>
     <string name="applovin_interstitial_id">af63f34ee8ec7860</string>
+    <string name="applovin_picture_screen_banner_id">94279944496d8c7e</string>
+    <string name="applovin_video_screen_banner_id">67b11b9f969ddfe7</string>
     <string name="adx_app_id">ca-app-pub-6736256473202733~5786299946</string>
     <string name="adx_banner_id">/7047,22946396544/apl/mix2ad3223/com.statuses.statussavers/bannerinapp</string>
 </resources>
