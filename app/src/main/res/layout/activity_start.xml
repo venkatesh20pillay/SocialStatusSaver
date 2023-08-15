@@ -130,14 +130,24 @@
 <!--        app:adSize="BANNER"-->
 <!--        app:adUnitId="@string/start_screen_banner_id"/>-->
 
-    <com.applovin.mediation.ads.MaxAdView
-        android:layout_width="match_parent"
+<!--    <com.applovin.mediation.ads.MaxAdView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:id="@+id/maxAd"-->
+<!--        android:background="@color/white"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/letsgo"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        maxads:adUnitId="@string/applovin_banner_id" />-->
+
+    <com.google.android.gms.ads.admanager.AdManagerAdView
+        android:id="@+id/bannerAdView"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:id="@+id/maxAd"
-        android:background="@color/white"
+        app:adSize="BANNER"
+        app:adUnitId="@string/adx_banner_id"
         app:layout_constraintBottom_toTopOf="@+id/letsgo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        maxads:adUnitId="@string/applovin_banner_id" />
+        app:layout_constraintStart_toStartOf="parent"></com.google.android.gms.ads.admanager.AdManagerAdView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

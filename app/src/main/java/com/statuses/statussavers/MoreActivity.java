@@ -21,7 +21,7 @@ public class MoreActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private CardView cardView;
-    private AdView moreAdView;
+   // private AdView moreAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +29,10 @@ public class MoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_more);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationViewMore);
         cardView = (CardView) findViewById(R.id.cardView);
-        moreAdView = (AdView) findViewById(R.id.moreAdView);
+        //moreAdView = (AdView) findViewById(R.id.moreAdView);
         setupBottomBar();
         setupCardView();
-        setbannerAd();
+        //setbannerAd();
     }
 
     private void setupCardView() {
@@ -75,7 +75,7 @@ public class MoreActivity extends AppCompatActivity {
     private void setbannerAd() {
         MobileAds.initialize(this);
         AdRequest adRequest = new AdRequest.Builder().build();
-        moreAdView.loadAd(adRequest);
+        //moreAdView.loadAd(adRequest);
     }
 
     private void openHomeActivity() {
