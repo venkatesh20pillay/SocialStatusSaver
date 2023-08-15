@@ -8,14 +8,10 @@
     tools:context=".Video">
 
     <RelativeLayout
-        android:layout_width="390dp"
-        android:layout_height="628dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/black"
-        android:padding="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/maxAd2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="5dp" >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -44,8 +40,7 @@
             android:id="@+id/components"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="#000000"
+            android:layout_above="@+id/maxAd2"            android:background="#000000"
             android:orientation="horizontal"
             android:paddingHorizontal="100dp"
             android:paddingBottom="10dp">
@@ -70,16 +65,15 @@
 
         </LinearLayout>
 
+        <com.applovin.mediation.ads.MaxAdView
+            android:id="@+id/maxAd2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:layout_alignParentBottom="true"
+            maxads:adUnitId="@string/applovin_video_screen_banner_id" />
+
 
     </RelativeLayout>
-    <com.applovin.mediation.ads.MaxAdView
-        android:id="@+id/maxAd2"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        maxads:adUnitId="@string/applovin_video_screen_banner_id" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
