@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:maxads="http://schemas.applovin.com/android/1.0"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Picture">
@@ -9,51 +10,58 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="5dp"
-        android:background="@color/black">
+        android:background="@color/black"
+        android:padding="5dp" >
 
         <ImageView
+            android:id="@+id/particularimage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@mipmap/ic_launcher_round"
-            android:layout_centerInParent="true"
             android:layout_above="@+id/components"
-            android:id="@+id/particularimage">
+            android:layout_centerInParent="true"
+            android:src="@mipmap/ic_launcher_round">
 
         </ImageView>
 
         <LinearLayout
+            android:id="@+id/components"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/components"
+            android:layout_above="@+id/maxAd"
             android:background="#000000"
-            android:paddingBottom="10dp"
+            android:orientation="horizontal"
             android:paddingHorizontal="100dp"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal">
+            android:paddingBottom="10dp">
 
             <ImageView
+                android:id="@+id/download"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:src="@mipmap/download"
-                android:id="@+id/download">
-            </ImageView>
+                android:src="@mipmap/download"></ImageView>
 
             <ImageView
+                android:id="@+id/share"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:src="@mipmap/share_new"
-                android:id="@+id/share">
+                android:src="@mipmap/share_new">
 
             </ImageView>
 
         </LinearLayout>
 
-
+        <com.applovin.mediation.ads.MaxAdView
+            android:id="@+id/maxAd"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            maxads:adUnitId="@string/applovin_picture_screen_banner_id" />
     </RelativeLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
