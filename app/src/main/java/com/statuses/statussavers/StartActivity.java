@@ -288,7 +288,7 @@ public class StartActivity extends AppCompatActivity {
 
     private void checkPermission1() {
         if(SDK_INT >= 30) {
-            boolean allowed = false;
+            boolean allowed = readPermission();
             if(allowed) {
                 setPermission1ButtonView();
             }
