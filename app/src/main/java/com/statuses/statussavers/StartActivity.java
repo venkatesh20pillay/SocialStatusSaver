@@ -88,7 +88,7 @@ public class StartActivity extends AppCompatActivity {
         setupOnClickButton();
         //setApplovin();
         //setbannerAd();
-        setupAdx();
+        //setupAdx();
     }
 
     private void setupAdx() {
@@ -288,13 +288,17 @@ public class StartActivity extends AppCompatActivity {
 
     private void checkPermission1() {
         if(SDK_INT >= 30) {
-            boolean allowed = readPermission();
+            boolean allowed = false;
             if(allowed) {
                 setPermission1ButtonView();
             }
             else {
-                ActivityCompat.requestPermissions(StartActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                if (SDK_INT >= 33) {
+                    ActivityCompat.requestPermissions(StartActivity.this, new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO}, 2);
 
+                } else {
+                    ActivityCompat.requestPermissions(StartActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                }
             }
         }
 
@@ -314,7 +318,12 @@ public class StartActivity extends AppCompatActivity {
 
     private Boolean readPermission() {
         SharedPreferences sh = StartActivity.this.getSharedPreferences("PERMISSION", Context.MODE_PRIVATE);
-        String uri = sh.getString("readwrite", "");
+        String uri;
+        if (SDK_INT >= 33) {
+            uri = sh.getString("readwrite33", "");
+        } else {
+            uri = sh.getString("readwrite", "");
+        }
         if(uri!=null) {
             if (uri.isEmpty()) {
                 return false;
@@ -386,7 +395,11 @@ public class StartActivity extends AppCompatActivity {
         if (grantResults.length > 1 && grantResults[0] == 0 && grantResults[1] == 0) {
             SharedPreferences sh = StartActivity.this.getSharedPreferences("PERMISSION", Context.MODE_PRIVATE);
             SharedPreferences.Editor ed = sh.edit();
-            ed.putString("readwrite", "true");
+            if (requestCode == 2) {
+                ed.putString("readwrite33", "true");
+            } else {
+                ed.putString("readwrite", "true");
+            }
             ed.apply();
             setPermission1ButtonView();
             setLetsGoView();

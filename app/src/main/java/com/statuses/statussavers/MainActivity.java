@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         //setbannerAd();
 //        initialiseAd();
         setupBottomBar();
-        setApplovin();
+        //setApplovin();
     }
 
     private void setApplovin() {
