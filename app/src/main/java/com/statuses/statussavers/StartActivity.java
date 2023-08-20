@@ -88,7 +88,7 @@ public class StartActivity extends AppCompatActivity {
         setupOnClickButton();
         //setApplovin();
         //setbannerAd();
-        //setupAdx();
+        setupAdx();
     }
 
     private void setupAdx() {
