@@ -86,18 +86,8 @@ public class StartActivity extends AppCompatActivity {
         setupLauncher();
         setView();
         setupOnClickButton();
-        //setApplovin();
+        setApplovin();
         //setbannerAd();
-        setupAdx();
-    }
-
-    private void setupAdx() {
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                setupAdxAd();
-            }
-        });
     }
 
     private void setApplovin() {
@@ -110,14 +100,8 @@ public class StartActivity extends AppCompatActivity {
         });
     }
 
-    private void setupAdxAd() {
-        mAdManagerAdView = findViewById(R.id.bannerAdView);
-        AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
-        mAdManagerAdView.loadAd(adRequest);
-    }
-
     private void loadAppLovinAd() {
-        //maxAdView = (MaxAdView) findViewById(R.id.maxAd);
+        maxAdView = (MaxAdView) findViewById(R.id.maxAd);
         maxAdView.setListener(new MaxAdViewAdListener() {
             @Override
             public void onAdExpanded(MaxAd maxAd) {
