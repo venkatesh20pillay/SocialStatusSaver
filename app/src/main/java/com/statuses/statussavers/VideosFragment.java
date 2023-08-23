@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -179,50 +180,54 @@ public class VideosFragment extends Fragment {
     private ArrayList<ModelClass> getData() {
 
         ModelClass f;
-        if(SDK_INT>29) {
-            SharedPreferences sh = getActivity().getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
-            String uri = sh.getString("PATH", "");
-            getContext().getContentResolver().takePersistableUriPermission(Uri.parse(uri), Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            if (uri != null) {
-                DocumentFile fileDoc = DocumentFile.fromTreeUri(getActivity().getApplicationContext(),Uri.parse(uri));
-                if (fileDoc.listFiles() != null){
-                    DocumentFile[] files = fileDoc.listFiles();
-                    for(int i = 0;i< files.length;i++) {
-                        DocumentFile file = files[i];
-                        f = new ModelClass(file.getUri().getPath(), file.getName(), file.getUri());
-                        if (!f.getUri().toString().endsWith(".nomedia")&&(f.getUri().toString().endsWith(".mp4"))) {
-                            fileslist.add(f);
+        try {
+            if (SDK_INT > 29) {
+                SharedPreferences sh = getActivity().getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
+                String uri = sh.getString("PATH", "");
+                getContext().getContentResolver().takePersistableUriPermission(Uri.parse(uri), Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                if (uri != null) {
+                    DocumentFile fileDoc = DocumentFile.fromTreeUri(getActivity().getApplicationContext(), Uri.parse(uri));
+                    if (fileDoc.listFiles() != null) {
+                        DocumentFile[] files = fileDoc.listFiles();
+                        for (int i = 0; i < files.length; i++) {
+                            DocumentFile file = files[i];
+                            f = new ModelClass(file.getUri().getPath(), file.getName(), file.getUri());
+                            if (!f.getUri().toString().endsWith(".nomedia") && (f.getUri().toString().endsWith(".mp4"))) {
+                                fileslist.add(f);
+                            }
                         }
                     }
                 }
-            }
-        } else {
-            String targetpath = Environment.getExternalStorageDirectory().getAbsolutePath() + Constant.FOLDER_NAME + "Media/.Statuses";
-            File targetdir = new File(targetpath);
-            files = targetdir.listFiles();
-            if (files == null) {
-                String targetpath1 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses";
-                File targetdir1 = new File(targetpath1);
-                files = targetdir1.listFiles();
-            }
-        }
-        if(files != null) {
-            for (int i = 0; i < files.length; i++) {
-                File file = files[i];
-                f = new ModelClass(files[i].getAbsolutePath(), file.getName(), Uri.fromFile(file));
-                if (f.getUri().toString().endsWith(".mp4")) {
-                    fileslist.add(f);
+            } else {
+                String targetpath = Environment.getExternalStorageDirectory().getAbsolutePath() + Constant.FOLDER_NAME + "Media/.Statuses";
+                File targetdir = new File(targetpath);
+                files = targetdir.listFiles();
+                if (files == null) {
+                    String targetpath1 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses";
+                    File targetdir1 = new File(targetpath1);
+                    files = targetdir1.listFiles();
                 }
             }
+            if (files != null) {
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
+                    f = new ModelClass(files[i].getAbsolutePath(), file.getName(), Uri.fromFile(file));
+                    if (f.getUri().toString().endsWith(".mp4")) {
+                        fileslist.add(f);
+                    }
+                }
+            }
+            if (!fileslist.isEmpty()) {
+                refreshLayout2.setVisibility(View.GONE);
+                refreshLayout.setVisibility(View.VISIBLE);
+            } else {
+                refreshLayout2.setVisibility(View.VISIBLE);
+                placeholder.setText(getString(R.string.nostatusvideos));
+                refreshLayout.setVisibility(View.GONE);
+            }
         }
-        if(!fileslist.isEmpty()) {
-            refreshLayout2.setVisibility(View.GONE);
-            refreshLayout.setVisibility(View.VISIBLE);
-        }
-        else {
-            refreshLayout2.setVisibility(View.VISIBLE);
-            placeholder.setText(getString(R.string.nostatusvideos));
-            refreshLayout.setVisibility(View.GONE);
+        catch (Exception e) {
+            
         }
         return fileslist;
     }

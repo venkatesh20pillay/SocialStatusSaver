@@ -87,6 +87,18 @@ public class MainActivity extends AppCompatActivity {
 //        initialiseAd();
         setupBottomBar();
         setApplovin();
+        updatePopupData();
+    }
+
+    private void updatePopupData() {
+        SharedPreferences sh = MainActivity.this.getSharedPreferences("POPUP", Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = sh.edit();
+        int counter = sh.getInt("popup",0);
+        if (counter >= 0) {
+            counter++;
+            ed.putInt("popup", counter);
+            ed.apply();
+        }
     }
 
     private void setApplovin() {
@@ -185,6 +197,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showPopup() {
+        SharedPreferences sh = MainActivity.this.getSharedPreferences("POPUP", Context.MODE_PRIVATE);
+        int counter = sh.getInt("popup", 0);
+        if(counter < 3) {
+            return;
+        }
+        SharedPreferences.Editor ed = sh.edit();
+        ed.putInt("popup", 0);
+        ed.apply();
         TextView txtClose;
         ImageView popupImage;
         myDialog = new Dialog(this);

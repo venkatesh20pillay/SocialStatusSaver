@@ -68,7 +68,12 @@ public class Splash extends AppCompatActivity {
             }
         } else {
             SharedPreferences sh = Splash.this.getSharedPreferences("PERMISSION", Context.MODE_PRIVATE);
-            String uri = sh.getString("readwrite", "");
+            String uri;
+            if (SDK_INT >= 33) {
+                uri = sh.getString("readwrite33", "");
+            } else {
+                uri = sh.getString("readwrite", "");
+            }
             if (uri != null) {
                 if (uri.isEmpty()) {
                     return false;
