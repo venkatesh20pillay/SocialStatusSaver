@@ -12,10 +12,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
         android:gravity="center"
         android:text="sdfukgdfshjk dsh"
         android:textSize="20sp"
@@ -42,10 +40,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
         android:gravity="center"
         android:text="sdfukgdfshjk dsh"
         android:textSize="20sp"
@@ -130,24 +126,26 @@
 <!--        app:adSize="BANNER"-->
 <!--        app:adUnitId="@string/start_screen_banner_id"/>-->
 
-<!--    <com.applovin.mediation.ads.MaxAdView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:id="@+id/maxAd"-->
-<!--        android:background="@color/white"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/letsgo"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        maxads:adUnitId="@string/applovin_banner_id" />-->
-
-    <com.google.android.gms.ads.admanager.AdManagerAdView
-        android:id="@+id/bannerAdView"
-        android:layout_width="wrap_content"
+    <com.applovin.mediation.ads.MaxAdView
+        android:id="@+id/maxAd"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:adSize="BANNER"
-        app:adUnitId="@string/adx_banner_id"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/letsgo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></com.google.android.gms.ads.admanager.AdManagerAdView>
+        app:layout_constraintStart_toStartOf="parent"
+        maxads:adUnitId="@string/applovin_banner_id" />
+
+<!--    <com.google.android.gms.ads.admanager.AdManagerAdView-->
+<!--        android:id="@+id/bannerAdView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginBottom="40dp"-->
+<!--        app:adSize="BANNER"-->
+<!--        app:adUnitId="/6499/example/banner"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/letsgo"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"></com.google.android.gms.ads.admanager.AdManagerAdView>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

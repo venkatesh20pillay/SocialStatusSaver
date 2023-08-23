@@ -15,6 +15,10 @@ import android.view.View;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.admanager.AdManagerAdRequest;
+import com.google.android.gms.ads.admanager.AdManagerAdView;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MoreActivity extends AppCompatActivity {
@@ -22,6 +26,7 @@ public class MoreActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private CardView cardView;
    // private AdView moreAdView;
+   private AdManagerAdView mAdManagerAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,22 @@ public class MoreActivity extends AppCompatActivity {
         setupBottomBar();
         setupCardView();
         //setbannerAd();
+        setupAdx();
+    }
+
+    private void setupAdx() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                setupAdxAd();
+            }
+        });
+    }
+
+    private void setupAdxAd() {
+        mAdManagerAdView = findViewById(R.id.bannerAdView);
+        AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
+        mAdManagerAdView.loadAd(adRequest);
     }
 
     private void setupCardView() {
