@@ -25,6 +25,9 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.admanager.AdManagerAdRequest;
+import com.google.android.gms.ads.admanager.AdManagerInterstitialAd;
+import com.google.android.gms.ads.admanager.AdManagerInterstitialAdLoadCallback;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
@@ -69,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
     private Dialog myDialog;
     MaxAdView maxAdView;
     private MaxInterstitialAd interstitialAd;
+    private AdManagerInterstitialAd mAdManagerInterstitialAd;
+    public static boolean adxIntitalised = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +91,40 @@ public class MainActivity extends AppCompatActivity {
         //setbannerAd();
 //        initialiseAd();
         setupBottomBar();
-        setApplovin();
+        //setApplovin();
+        setupAdx();
         updatePopupData();
+    }
+
+    private void setupAdx() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                MainActivity.adxIntitalised = true;
+                setupAdxAd();
+            }
+        });
+    }
+
+    private void setupAdxAd() {
+        AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
+
+        AdManagerInterstitialAd.load(this,"/7047,22946396544/apl/mix2ad3223/com.statuses.statussavers/interstitialinapp", adRequest,
+                new AdManagerInterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull AdManagerInterstitialAd interstitialAd) {
+                        // The mAdManagerInterstitialAd reference will be null until
+                        // an ad is loaded.
+                        mAdManagerInterstitialAd = interstitialAd;
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+                        mAdManagerInterstitialAd = null;
+                    }
+                });
     }
 
     private void updatePopupData() {
@@ -271,7 +308,8 @@ public class MainActivity extends AppCompatActivity {
             //initialiseAd();
         } else if (MainActivity.count == 7) {
             //showInterstitialAd();
-            showApplovinInterstitialAd();
+            //showApplovinInterstitialAd();
+            showAdxInterstitial();
         } else if (MainActivity.count == 3) {
             showPopup();
         }
@@ -280,6 +318,12 @@ public class MainActivity extends AppCompatActivity {
     private void showApplovinInterstitialAd() {
         if (interstitialAd.isReady()) {
             interstitialAd.showAd();
+        }
+    }
+
+    private void showAdxInterstitial() {
+        if (mAdManagerInterstitialAd != null) {
+            mAdManagerInterstitialAd.show(MainActivity.this);
         }
     }
 
