@@ -42,12 +42,9 @@ public class MoreActivity extends AppCompatActivity {
     }
 
     private void setupAdx() {
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                setupAdxAd();
-            }
-        });
+        if(MainActivity.adxIntitalised == true) {
+            setupAdxAd();
+        }
     }
 
     private void setupAdxAd() {
