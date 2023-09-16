@@ -227,11 +227,18 @@ public class Picture extends AppCompatActivity {
 
         String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(),bitmap,"title",null);
         if (bitmapPath != null) {
-            Uri uri = Uri.parse(bitmapPath);
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("image/png");
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
-            startActivity(Intent.createChooser(intent, "Share"));
+            try {
+                Uri uri = Uri.parse(bitmapPath);
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("image/png");
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                startActivity(Intent.createChooser(intent, "Share"));
+            }
+            catch (Exception e) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Unable to share", Toast.LENGTH_SHORT);
+                toast.show();
+                finish();
+            }
         } else {
             Toast toast = Toast.makeText(getApplicationContext(), "Image not found", Toast.LENGTH_SHORT);
             toast.show();
