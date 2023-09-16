@@ -31,17 +31,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
-
-<!--    <com.google.android.gms.ads.AdView-->
-<!--        android:id="@+id/mainAdView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:adSize="BANNER"-->
-<!--        app:adUnitId="@string/image_fragment_banner_id"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent" />-->
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" >
+    </androidx.viewpager.widget.ViewPager>
 
     <com.applovin.mediation.ads.MaxAdView
         android:id="@+id/maxAd1"
@@ -49,9 +40,39 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/white"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:alpha="1.0"
+        android:background="@color/white"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.gms.ads.admanager.AdManagerAdView
+            android:id="@+id/bannerAdViewMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone"
+            app:adSize="BANNER"
+            app:adUnitId="/6499/example/banner"></com.google.android.gms.ads.admanager.AdManagerAdView>
+
+        <TextView
+            android:id="@+id/adSpace"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="Ad Space"
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

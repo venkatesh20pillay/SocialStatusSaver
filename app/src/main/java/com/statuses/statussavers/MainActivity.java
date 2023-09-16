@@ -20,12 +20,14 @@ import com.applovin.mediation.ads.MaxInterstitialAd;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkConfiguration;
 import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
+import com.google.android.gms.ads.admanager.AdManagerAdView;
 import com.google.android.gms.ads.admanager.AdManagerInterstitialAd;
 import com.google.android.gms.ads.admanager.AdManagerInterstitialAdLoadCallback;
 import com.google.android.gms.ads.initialization.InitializationStatus;
@@ -51,6 +53,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.statuses.statussavers.ui.main.SectionsPagerAdapter;
@@ -65,8 +68,6 @@ import static android.os.Build.VERSION.SDK_INT;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private AdView mainAdView;
-    private InterstitialAd mInterstitialAd;
     private static int count = 0;
     private BottomNavigationView bottomNavigationView;
     private Dialog myDialog;
@@ -74,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
     private MaxInterstitialAd interstitialAd;
     private AdManagerInterstitialAd mAdManagerInterstitialAd;
     public static boolean adxIntitalised = false;
+    private static boolean maxAdxInitialised = false;
+    private AdManagerAdView mAdManagerAdView;
+    private TextView textView;
+    private LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,13 +90,12 @@ public class MainActivity extends AppCompatActivity {
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
-        //mainAdView = (AdView) findViewById(R.id.mainAdView);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
+        textView = (TextView) findViewById(R.id.adSpace);
+        linearLayout = (LinearLayout) findViewById(R.id.linearlayout);
         tabs.setupWithViewPager(viewPager);
-        //setbannerAd();
-//        initialiseAd();
         setupBottomBar();
-        //setApplovin();
+        setApplovin();
         setupAdx();
         updatePopupData();
     }
@@ -101,7 +105,54 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
                 MainActivity.adxIntitalised = true;
+                setupAdxBannerAd();
                 setupAdxAd();
+            }
+        });
+    }
+
+    private void setupAdxBannerAd() {
+        mAdManagerAdView = findViewById(R.id.bannerAdViewMain);
+        AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
+        mAdManagerAdView.loadAd(adRequest);
+        mAdManagerAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+            }
+
+            @Override
+            public void onAdFailedToLoad(LoadAdError adError) {
+                // Code to be executed when an ad request fails.
+                linearLayout.setVisibility(View.GONE);
+                if (MainActivity.adxIntitalised == true) {
+                    loadAppLovinAd();
+                }
+            }
+
+            @Override
+            public void onAdImpression() {
+                // Code to be executed when an impression is recorded
+                // for an ad.
+            }
+
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                textView.setVisibility(View.GONE);
+                mAdManagerAdView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
             }
         });
     }
@@ -109,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupAdxAd() {
         AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
 
-        AdManagerInterstitialAd.load(this,"/7047,22946396544/apl/mix2ad3223/com.statuses.statussavers/interstitialinapp", adRequest,
+        AdManagerInterstitialAd.load(this,"/6499/example/interstitial", adRequest,
                 new AdManagerInterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull AdManagerInterstitialAd interstitialAd) {
@@ -143,7 +194,10 @@ public class MainActivity extends AppCompatActivity {
         AppLovinSdk.initializeSdk(this, new AppLovinSdk.SdkInitializationListener() {
             @Override
             public void onSdkInitialized(AppLovinSdkConfiguration appLovinSdkConfiguration) {
-                loadAppLovinAd();
+                MainActivity.maxAdxInitialised = true;
+                if(linearLayout.getVisibility() == View.GONE) {
+                    loadAppLovinAd();
+                }
                 loadInterstitialAd();
             }
         });
@@ -189,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadAppLovinAd() {
         maxAdView = (MaxAdView) findViewById(R.id.maxAd1);
+        maxAdView.setVisibility(View.VISIBLE);
         maxAdView.setListener(new MaxAdViewAdListener() {
             @Override
             public void onAdExpanded(MaxAd maxAd) {
@@ -305,13 +360,19 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.home);
         MainActivity.count += 1;
         if (MainActivity.count == 2) {
-            //initialiseAd();
-        } else if (MainActivity.count == 7) {
-            //showInterstitialAd();
-            //showApplovinInterstitialAd();
-            showAdxInterstitial();
+
+        } else if (MainActivity.count == 6) {
+            showInterstitalAd();
         } else if (MainActivity.count == 3) {
             showPopup();
+        }
+    }
+
+    private void showInterstitalAd() {
+        if (mAdManagerInterstitialAd != null) {
+            mAdManagerInterstitialAd.show(MainActivity.this);
+        } else if (interstitialAd.isReady()) {
+            interstitialAd.showAd();
         }
     }
 
@@ -326,70 +387,6 @@ public class MainActivity extends AppCompatActivity {
             mAdManagerInterstitialAd.show(MainActivity.this);
         }
     }
-
-    private void initialiseAd() {
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(@NonNull @NotNull InitializationStatus initializationStatus) {
-
-            }
-        });
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(this, "ca-app-pub-4746738763099699/2967106703", adRequest, new InterstitialAdLoadCallback() {
-            @Override
-            public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
-                super.onAdFailedToLoad(loadAdError);
-                mInterstitialAd = null;
-            }
-
-            @Override
-            public void onAdLoaded(@NonNull @NotNull InterstitialAd interstitialAd) {
-                super.onAdLoaded(interstitialAd);
-                mInterstitialAd = interstitialAd;
-            }
-        });
-    }
-
-    private void showInterstitialAd() {
-        if (mInterstitialAd != null) {
-            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                @Override
-                public void onAdClicked() {
-                    super.onAdClicked();
-                }
-
-                @Override
-                public void onAdDismissedFullScreenContent() {
-                    super.onAdDismissedFullScreenContent();
-                    mInterstitialAd = null;
-                }
-
-                @Override
-                public void onAdFailedToShowFullScreenContent(@NonNull @NotNull AdError adError) {
-                    super.onAdFailedToShowFullScreenContent(adError);
-                    mInterstitialAd = null;
-                }
-
-                @Override
-                public void onAdImpression() {
-                    super.onAdImpression();
-                }
-
-                @Override
-                public void onAdShowedFullScreenContent() {
-                    super.onAdShowedFullScreenContent();
-                }
-            });
-            mInterstitialAd.show(this);
-        }
-    }
-
-    private void setbannerAd() {
-        MobileAds.initialize(this);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mainAdView.loadAd(adRequest);
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
