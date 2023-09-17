@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupAdxAd() {
         AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
 
-        AdManagerInterstitialAd.load(this,"/6499/example/interstitial", adRequest,
+        AdManagerInterstitialAd.load(this,"/7047,22946396544/apl/mix2ad3223/com.statuses.statussavers/interstitialinapp", adRequest,
                 new AdManagerInterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull AdManagerInterstitialAd interstitialAd) {
