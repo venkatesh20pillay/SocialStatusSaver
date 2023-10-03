@@ -63,7 +63,7 @@
             android:gravity="center"
             android:visibility="gone"
             app:adSize="BANNER"
-            app:adUnitId="@string/adx_banner_id"></com.google.android.gms.ads.admanager.AdManagerAdView>
+            app:adUnitId="@string/adx_banner_id_2"></com.google.android.gms.ads.admanager.AdManagerAdView>
 
         <TextView
             android:id="@+id/adSpace"

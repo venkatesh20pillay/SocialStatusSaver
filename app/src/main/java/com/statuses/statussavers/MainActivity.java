@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupAdxAd() {
         AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
 
-        AdManagerInterstitialAd.load(this,"/7047,22946396544/apl/mix2ad3223/com.statuses.statussavers/interstitialinapp", adRequest,
+        AdManagerInterstitialAd.load(this,"/22926502423/mix2ads_Status_Saver_interstitial", adRequest,
                 new AdManagerInterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull AdManagerInterstitialAd interstitialAd) {
@@ -361,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.count += 1;
         if (MainActivity.count == 2) {
 
-        } else if (MainActivity.count == 6) {
+        } else if (MainActivity.count == 4) {
             showInterstitalAd();
         } else if (MainActivity.count == 3) {
             showPopup();
