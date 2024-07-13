@@ -10,8 +10,8 @@ android {
         applicationId "com.statuses.statussavers"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 21
-        versionName "2.8"
+        versionCode 25
+        versionName "3.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Status Saver</string>
+    <string name="app_name">Save Status</string>
     <string name="tab_text_1">Images</string>
     <string name="tab_text_2">Videos</string>
     <string name="tab_text_3">Saved</string>
