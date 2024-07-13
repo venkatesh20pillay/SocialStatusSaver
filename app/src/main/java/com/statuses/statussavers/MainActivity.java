@@ -360,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.count += 1;
         if (MainActivity.count == 2) {
 
-        } else if (MainActivity.count == 4) {
+        } else if (MainActivity.count == 5) {
             showInterstitalAd();
         } else if (MainActivity.count == 3) {
             showPopup();
