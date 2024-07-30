@@ -23,7 +23,7 @@
                 android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="100dp"
+                android:paddingBottom="110dp"
                 android:clipToPadding="false"
                 android:fitsSystemWindows="true"></androidx.recyclerview.widget.RecyclerView>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
