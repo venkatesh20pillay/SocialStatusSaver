@@ -62,8 +62,6 @@ public class VideosFragment extends Fragment {
     ArrayList<ModelClass> fileslist = new ArrayList<>();
     SwipeRefreshLayout refreshLayout2;
     TextView placeholder;
-    AdView videosAdview;
-    private InterstitialAd mInterstitialAd;
 
     @Nullable
     @org.jetbrains.annotations.Nullable
@@ -74,55 +72,13 @@ public class VideosFragment extends Fragment {
         refreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe);
         placeholder = (TextView) root.findViewById(R.id.empty_view);
         refreshLayout2 = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout_emptyView);
-        videosAdview = (AdView) root.findViewById(R.id.videosAdView);
         setupOnClickText();
         setRefresh();
         setRefresh2();
         setuplayout();
-//        setbannerAd();
-//        initialiseAd();
-//        showFullAd();
         return root;
     }
 
-    private void showFullAd() {
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showInterstitialAd();
-            }
-        }, 10000);
-    }
-
-    private void initialiseAd() {
-        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(@NonNull @NotNull InitializationStatus initializationStatus) {
-
-            }
-        });
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(getContext(), "ca-app-pub-3940256099942544/1033173712", adRequest, new InterstitialAdLoadCallback() {
-            @Override
-            public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
-                super.onAdFailedToLoad(loadAdError);
-                mInterstitialAd = null;
-            }
-
-            @Override
-            public void onAdLoaded(@NonNull @NotNull InterstitialAd interstitialAd) {
-                super.onAdLoaded(interstitialAd);
-                mInterstitialAd = interstitialAd;
-            }
-        });
-    }
-
-    private void setbannerAd() {
-        MobileAds.initialize(getContext());
-        AdRequest adRequest = new AdRequest.Builder().build();
-        videosAdview.loadAd(adRequest);
-    }
 
     @Override
     public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
@@ -242,40 +198,6 @@ public class VideosFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private void showInterstitialAd() {
-        if (mInterstitialAd != null) {
-            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                @Override
-                public void onAdClicked() {
-                    super.onAdClicked();
-                }
-
-                @Override
-                public void onAdDismissedFullScreenContent() {
-                    super.onAdDismissedFullScreenContent();
-                    mInterstitialAd = null;
-                }
-
-                @Override
-                public void onAdFailedToShowFullScreenContent(@NonNull @NotNull AdError adError) {
-                    super.onAdFailedToShowFullScreenContent(adError);
-                    mInterstitialAd = null;
-                }
-
-                @Override
-                public void onAdImpression() {
-                    super.onAdImpression();
-                }
-
-                @Override
-                public void onAdShowedFullScreenContent() {
-                    super.onAdShowedFullScreenContent();
-                }
-            });
-            mInterstitialAd.show(getActivity());
-        }
     }
 
     @Override
