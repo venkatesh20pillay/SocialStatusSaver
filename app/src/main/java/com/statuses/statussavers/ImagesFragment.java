@@ -67,8 +67,6 @@ public class ImagesFragment extends Fragment {
     ActivityResultLauncher<Intent> someActivityResultLauncher;
     ArrayList<ModelClass> fileslist = new ArrayList<>();
     TextView placeholder;
-    AdView imagesAdview;
-    private InterstitialAd mInterstitialAd;
 
 
     @Nullable
@@ -80,92 +78,16 @@ public class ImagesFragment extends Fragment {
         refreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe);
         refreshLayout2 = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout_emptyView);
         placeholder = (TextView) root.findViewById(R.id.empty_view);
-        imagesAdview = (AdView) root.findViewById(R.id.imagesAdView);
         setupOnClickText();
         setRefresh();
         setuplayout();
-//        setbannerAd();
-//        initialiseAd();
-//        showFullAd();
         return root;
     }
 
-    private void showFullAd() {
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showInterstitialAd();
-            }
-        }, 10000);
-    }
-
-    private void setbannerAd() {
-        MobileAds.initialize(getContext());
-        AdRequest adRequest = new AdRequest.Builder().build();
-        imagesAdview.loadAd(adRequest);
-    }
-
-    private void showInterstitialAd() {
-        if (mInterstitialAd != null) {
-            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                @Override
-                public void onAdClicked() {
-                    super.onAdClicked();
-                }
-
-                @Override
-                public void onAdDismissedFullScreenContent() {
-                    super.onAdDismissedFullScreenContent();
-                    mInterstitialAd = null;
-                }
-
-                @Override
-                public void onAdFailedToShowFullScreenContent(@NonNull @NotNull AdError adError) {
-                    super.onAdFailedToShowFullScreenContent(adError);
-                    mInterstitialAd = null;
-                }
-
-                @Override
-                public void onAdImpression() {
-                    super.onAdImpression();
-                }
-
-                @Override
-                public void onAdShowedFullScreenContent() {
-                    super.onAdShowedFullScreenContent();
-                }
-            });
-            mInterstitialAd.show(getActivity());
-        }
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-    }
-
-    private void initialiseAd() {
-        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(@NonNull @NotNull InitializationStatus initializationStatus) {
-
-            }
-        });
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(getContext(), "ca-app-pub-3940256099942544/1033173712", adRequest, new InterstitialAdLoadCallback() {
-            @Override
-            public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
-                super.onAdFailedToLoad(loadAdError);
-                mInterstitialAd = null;
-            }
-
-            @Override
-            public void onAdLoaded(@NonNull @NotNull InterstitialAd interstitialAd) {
-                super.onAdLoaded(interstitialAd);
-                mInterstitialAd = interstitialAd;
-            }
-        });
     }
 
     @Override
@@ -195,17 +117,6 @@ public class ImagesFragment extends Fragment {
                }
             }
         });
-    }
-
-    private Boolean readDataFromPrefs() {
-        SharedPreferences sh = getActivity().getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
-        String uri = sh.getString("PATH", "");
-        if(uri!=null) {
-            if (uri.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private void openHowToUse() {
