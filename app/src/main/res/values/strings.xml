@@ -27,4 +27,6 @@
     <string name="adx_app_id_2">ca-app-pub-5356614082635334~5879548108</string>
     <string name="adx_banner_id">/7047,22946396544/apl/mix2ad3223/com.statuses.statussavers/bannerinapp</string>
     <string name="adx_banner_id_2">/22926502423/mix2ads_Status_Saver_banner</string>
+    <string name="storage_permission">Please give storage permission to save status</string>
+    <string name="storage_permission2">Please give access to .Statuses folder to get all the status</string>
 </resources>

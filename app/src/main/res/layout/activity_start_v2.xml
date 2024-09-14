@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:maxads="http://schemas.applovin.com/android/1.0">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true"
+    android:layout_above="@+id/maxAd"
+    android:fillViewport="true">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:id="@+id/firststep"
+            android:layout_marginTop="48dp">
+            <ImageView
+                android:id="@+id/first"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentTop="true"
+                android:src="@mipmap/numberone"
+                />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/first"
+                android:paddingLeft="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/permission1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/storage_permission"
+                    android:textColor="#202020"
+                    android:textSize="20dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/rounded_corner"
+                    android:text="Click here"
+                    android:id="@+id/permission1Button"
+                    android:layout_below="@+id/permission1"
+                    android:layout_alignLeft="@+id/permission1"/>
+
+            </RelativeLayout>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:id="@+id/secondstep"
+            android:layout_below="@id/firststep"
+            android:layout_marginTop="30dp"
+            android:paddingBottom="100dp">
+            <ImageView
+                android:id="@+id/second"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentTop="true"
+                android:src="@mipmap/numbertwo"
+                />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/second"
+                android:paddingLeft="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/permission2"
+                    android:layout_height="wrap_content"
+                    android:text="@string/storage_permission2"
+                    android:textColor="#202020"
+                    android:textSize="20dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/rounded_corner"
+                    android:text="Click here"
+                    android:id="@+id/permission2Button"
+                    android:layout_below="@+id/permission2"
+                    android:layout_alignLeft="@+id/permission2"/>
+                <ImageView
+                    android:layout_width="284dp"
+                    android:layout_height="276dp"
+                    android:layout_marginTop="12dp"
+                    android:id="@+id/usethisfolder2"
+                    android:layout_below="@+id/permission2Button"
+                    android:src="@mipmap/guide"/>
+
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+</ScrollView>
+    <com.applovin.mediation.ads.MaxAdView
+        android:id="@+id/maxAd"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        maxads:adUnitId="@string/applovin_banner_id" />
+</RelativeLayout>
