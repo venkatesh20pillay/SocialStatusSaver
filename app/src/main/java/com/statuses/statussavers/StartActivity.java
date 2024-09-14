@@ -178,8 +178,8 @@ public class StartActivity extends AppCompatActivity {
             boolean allowed = readDataFromPrefs();
             if (allowed) {
                 permission2Button.setText("Done");
-                permission2Button.setTextColor(getResources().getColor(R.color.white));
-                permission2Button.setBackground(getDrawable(R.drawable.rounded_corner_2));
+                permission2Button.setTextColor(getResources().getColor(R.color.black));
+                permission2Button.setBackgroundColor(getResources().getColor(R.color.white));
             } else {
                 permission2Button.setText("Click Here");
                 permission2Button.setTextColor(getResources().getColor(R.color.white));
