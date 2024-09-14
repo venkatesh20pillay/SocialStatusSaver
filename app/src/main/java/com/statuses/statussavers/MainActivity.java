@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAdHidden(MaxAd maxAd) {
-
+                interstitialAd.loadAd();
             }
 
             @Override
@@ -362,8 +362,8 @@ public class MainActivity extends AppCompatActivity {
 
         } else if (MainActivity.count == 5) {
             showInterstitalAd();
-        } else if (MainActivity.count == 3) {
-            showPopup();
+        } else if (MainActivity.count > 5 && MainActivity.count % 4 == 0) {
+            showInterstitalAd();
         }
     }
 
