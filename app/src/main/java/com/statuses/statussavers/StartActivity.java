@@ -149,6 +149,8 @@ public class StartActivity extends AppCompatActivity {
 
     private void setLetsGoView() {
         if(checkBothPermission()) {
+            Toast.makeText(this, "Loading ...",
+                    Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(StartActivity.this, MainActivity.class);
             startActivity(intent);
         }
@@ -180,6 +182,7 @@ public class StartActivity extends AppCompatActivity {
                 permission2Button.setText("Done");
                 permission2Button.setTextColor(getResources().getColor(R.color.white));
                 permission2Button.setBackground(getDrawable(R.drawable.rounded_corner));
+                setLetsGoView();
             } else {
                 permission2Button.setText("Click Here");
                 permission2Button.setTextColor(getResources().getColor(R.color.white));
@@ -203,6 +206,7 @@ public class StartActivity extends AppCompatActivity {
                 permission1Button.setText("Done");
                 permission1Button.setTextColor(getResources().getColor(R.color.white));
                 permission1Button.setBackground(getDrawable(R.drawable.rounded_corner_2));
+                setLetsGoView();
             }
             else {
                 permission1Button.setText("Click Here");
@@ -216,6 +220,7 @@ public class StartActivity extends AppCompatActivity {
                 permission1Button.setText("Done");
                 permission1Button.setTextColor(getResources().getColor(R.color.white));
                 permission1Button.setBackground(getDrawable(R.drawable.rounded_corner_2));
+                setLetsGoView();
             }
             else {
                 permission1Button.setText("Click Here");
@@ -336,7 +341,6 @@ public class StartActivity extends AppCompatActivity {
                                     ed.putString("PATH", path);
                                     ed.apply();
                                     setPermission2ButtonView();
-                                    setLetsGoView();
                                 }
                                 else {
                                     Toast.makeText(getApplicationContext(),"Please don't change directory and make sure its .Statuses", Toast.LENGTH_LONG).show();
@@ -360,7 +364,6 @@ public class StartActivity extends AppCompatActivity {
             }
             ed.apply();
             setPermission1ButtonView();
-            setLetsGoView();
         }
     }
 }
