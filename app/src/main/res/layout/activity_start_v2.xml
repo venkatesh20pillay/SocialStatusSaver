@@ -60,7 +60,7 @@
             android:id="@+id/secondstep"
             android:layout_below="@id/firststep"
             android:layout_marginTop="30dp"
-            android:paddingBottom="10dp">
+            android:paddingBottom="100dp">
             <ImageView
                 android:id="@+id/second"
                 android:layout_width="36dp"
