@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAdLoadFailed(String s, MaxError maxError) {
-
+                maxAdView.loadAd();
             }
 
             @Override
