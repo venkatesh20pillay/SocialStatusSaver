@@ -8,12 +8,11 @@
     tools:context=".Splash">
 
     <ImageView
+        android:id="@+id/launchicon"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:src="@mipmap/appicon"
-        android:id="@+id/launchicon"
-        android:layout_centerInParent="true">
-    </ImageView>
+        android:layout_centerInParent="true"
+        android:src="@mipmap/ic_launcher"></ImageView>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

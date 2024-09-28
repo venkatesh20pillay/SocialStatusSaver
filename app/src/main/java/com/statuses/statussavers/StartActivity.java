@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -61,33 +62,27 @@ public class StartActivity extends AppCompatActivity {
 
     TextView permission1;
     TextView permission2;
-    TextView note;
     Button permission1Button;
     Button permission2Button;
-    Button letsGo;
-    ImageView usethisfolder;
     ActivityResultLauncher<Intent> someActivityResultLauncher;
-    //AdView adview;
     MaxAdView maxAdView;
-    private AdManagerAdView mAdManagerAdView;
+    ImageView imageViewSecond;
+    ImageView useThisFolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start);
+        setContentView(R.layout.activity_start_v2);
         permission1 = (TextView) findViewById(R.id.permission1);
         permission2 = (TextView) findViewById(R.id.permission2);
-        note = (TextView) findViewById(R.id.note);
-        usethisfolder = (ImageView) findViewById(R.id.usethisfolder);
         permission1Button = (Button) findViewById(R.id.permission1Button);
         permission2Button = (Button) findViewById(R.id.permission2Button);
-        letsGo = (Button) findViewById(R.id.letsgo);
-        //adview = (AdView) findViewById(R.id.adview);
+        imageViewSecond = (ImageView) findViewById(R.id.second);
+        useThisFolder = (ImageView) findViewById(R.id.usethisfolder2);
         setupLauncher();
         setView();
         setupOnClickButton();
         setApplovin();
-        //setbannerAd();
     }
 
     private void setApplovin() {
@@ -152,22 +147,12 @@ public class StartActivity extends AppCompatActivity {
         setLetsGoView();
     }
 
-    private void setbannerAd() {
-        MobileAds.initialize(this);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        //adview.loadAd(adRequest);
-    }
-
     private void setLetsGoView() {
         if(checkBothPermission()) {
-            letsGo.setText("Let's Go");
-            letsGo.setBackgroundColor(Color.parseColor("#005C29"));
-            letsGo.setTextColor(getResources().getColor(R.color.white));
-        }
-        else {
-            letsGo.setText("Please give above permissions");
-            letsGo.setBackgroundColor(Color.parseColor("#808080"));
-            letsGo.setTextColor(getResources().getColor(R.color.white));
+            Toast.makeText(this, "Loading ...",
+                    Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(StartActivity.this, MainActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -188,56 +173,59 @@ public class StartActivity extends AppCompatActivity {
         return path && readwrite;
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void setPermission2ButtonView() {
         if(SDK_INT >= 30) {
-            permission2.setText("Please give access to .Statuses folder to get all the status");
-            note.setText("* Make user you are on .Statuses folder, click on use this folder and allow. See image below for reference.");
-            usethisfolder.setImageResource(R.mipmap.usethisfolder);
+            permission2.setText(R.string.storage_permission2);
             boolean allowed = readDataFromPrefs();
             if (allowed) {
                 permission2Button.setText("Done");
-                permission2Button.setTextColor(getResources().getColor(R.color.black));
-                permission2Button.setBackgroundColor(getResources().getColor(R.color.white));
+                permission2Button.setTextColor(getResources().getColor(R.color.white));
+                permission2Button.setBackground(getDrawable(R.drawable.rounded_corner));
+                setLetsGoView();
             } else {
                 permission2Button.setText("Click Here");
                 permission2Button.setTextColor(getResources().getColor(R.color.white));
-                permission2Button.setBackgroundColor(Color.parseColor("#005C29"));
+                permission2Button.setBackground(getDrawable(R.drawable.rounded_corner));
             }
         }
         else {
             permission2Button.setVisibility(View.GONE);
             permission2.setVisibility(View.GONE);
-            usethisfolder.setVisibility(View.GONE);
-            note.setVisibility(View.GONE);
+            imageViewSecond.setVisibility(View.GONE);
+            useThisFolder.setVisibility(View.GONE);
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void setPermission1ButtonView() {
-        permission1.setText("Please give storage permission to save status");
+        permission1.setText(R.string.storage_permission);
         if(SDK_INT >= 30) {
             boolean allowed = readPermission();
             if(allowed) {
                 permission1Button.setText("Done");
-                permission1Button.setTextColor(getResources().getColor(R.color.black));
-                permission1Button.setBackgroundColor(getResources().getColor(R.color.white));
+                permission1Button.setTextColor(getResources().getColor(R.color.white));
+                permission1Button.setBackground(getDrawable(R.drawable.rounded_corner_2));
+                setLetsGoView();
             }
             else {
                 permission1Button.setText("Click Here");
                 permission1Button.setTextColor(getResources().getColor(R.color.white));
-                permission1Button.setBackgroundColor(Color.parseColor("#005C29"));
+                permission1Button.setBackground(getDrawable(R.drawable.rounded_corner));
             }
         }
 
         else {
             if(ContextCompat.checkSelfPermission(StartActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED) {
                 permission1Button.setText("Done");
-                permission1Button.setTextColor(getResources().getColor(R.color.black));
-                permission1Button.setBackgroundColor(getResources().getColor(R.color.white));
+                permission1Button.setTextColor(getResources().getColor(R.color.white));
+                permission1Button.setBackground(getDrawable(R.drawable.rounded_corner_2));
+                setLetsGoView();
             }
             else {
                 permission1Button.setText("Click Here");
                 permission1Button.setTextColor(getResources().getColor(R.color.white));
-                permission1Button.setBackgroundColor(Color.parseColor("#005C29"));
+                permission1Button.setBackground(getDrawable(R.drawable.rounded_corner));
             }
         }
     }
@@ -256,15 +244,6 @@ public class StartActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (permission2Button.getText().toString().equalsIgnoreCase("Click Here")) {
                     checkPermission2();
-                }
-            }
-        });
-        letsGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkBothPermission()) {
-                    Intent intent = new Intent(StartActivity.this, MainActivity.class);
-                    startActivity(intent);
                 }
             }
         });
@@ -362,7 +341,6 @@ public class StartActivity extends AppCompatActivity {
                                     ed.putString("PATH", path);
                                     ed.apply();
                                     setPermission2ButtonView();
-                                    setLetsGoView();
                                 }
                                 else {
                                     Toast.makeText(getApplicationContext(),"Please don't change directory and make sure its .Statuses", Toast.LENGTH_LONG).show();
@@ -386,7 +364,6 @@ public class StartActivity extends AppCompatActivity {
             }
             ed.apply();
             setPermission1ButtonView();
-            setLetsGoView();
         }
     }
 }
