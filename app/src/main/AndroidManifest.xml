@@ -39,16 +39,12 @@
             android:theme="@style/Theme.WhatsappSavers">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/adx_app_id_2" />
-        <meta-data android:name="applovin.sdk.key"
+            android:name="applovin.sdk.key"
             android:value="_MudM74bNJVdvK6QTPbWsZJ6vDPNKe5FewSXgwuxFv7gUivBxUg9FRqeTGZKBPZTl7byRprTRC93GbnEC9bLu5"/>
     </application>
 
