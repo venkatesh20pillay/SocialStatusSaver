@@ -81,9 +81,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSdkInitialized(AppLovinSdkConfiguration appLovinSdkConfiguration) {
                 MainActivity.maxAdxInitialised = true;
-                if(linearLayout.getVisibility() == View.GONE) {
-                    loadAppLovinAd();
-                }
+                linearLayout.setVisibility(View.GONE);
+                loadAppLovinAd();
                 loadInterstitialAd();
             }
         });
