@@ -12,21 +12,12 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.admanager.AdManagerAdRequest;
-import com.google.android.gms.ads.admanager.AdManagerAdView;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MoreActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private CardView cardView;
-   // private AdView moreAdView;
-   private AdManagerAdView mAdManagerAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,23 +25,8 @@ public class MoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_more);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationViewMore);
         cardView = (CardView) findViewById(R.id.cardView);
-        //moreAdView = (AdView) findViewById(R.id.moreAdView);
         setupBottomBar();
         setupCardView();
-        //setbannerAd();
-        setupAdx();
-    }
-
-    private void setupAdx() {
-        if(MainActivity.adxIntitalised == true) {
-            setupAdxAd();
-        }
-    }
-
-    private void setupAdxAd() {
-        mAdManagerAdView = findViewById(R.id.bannerAdView);
-        AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
-        mAdManagerAdView.loadAd(adRequest);
     }
 
     private void setupCardView() {
@@ -88,12 +64,6 @@ public class MoreActivity extends AppCompatActivity {
                 return false;
             }
         });
-    }
-
-    private void setbannerAd() {
-        MobileAds.initialize(this);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        //moreAdView.loadAd(adRequest);
     }
 
     private void openHomeActivity() {
