@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Dialog myDialog;
     MaxAdView maxAdView;
     private MaxInterstitialAd interstitialAd;
-    private static boolean maxAdxInitialised = false;
+    public static boolean maxAdxInitialised = false;
     private TextView textView;
     private LinearLayout linearLayout;
 
