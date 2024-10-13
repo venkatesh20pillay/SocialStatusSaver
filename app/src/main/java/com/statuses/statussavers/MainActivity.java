@@ -16,6 +16,7 @@ import com.applovin.mediation.ads.MaxAdView;
 import com.applovin.mediation.ads.MaxInterstitialAd;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkConfiguration;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -31,6 +32,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.play.core.review.ReviewException;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
 import com.statuses.statussavers.ui.main.SectionsPagerAdapter;
 import com.statuses.statussavers.databinding.ActivityMainBinding;
 
@@ -45,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     public static boolean maxAdxInitialised = false;
     private TextView textView;
     private LinearLayout linearLayout;
+    private ReviewManager reviewManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,47 @@ public class MainActivity extends AppCompatActivity {
         setupBottomBar();
         setApplovin();
         updatePopupData();
+    }
+
+    private void updateReviewData() {
+        SharedPreferences sh = MainActivity.this.getSharedPreferences("REVIEW", Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = sh.edit();
+        int counter = sh.getInt("review",0);
+        boolean openPopup = false;
+        if (counter >= 0) {
+            counter++;
+            if(counter % 5 == 0) {
+                openPopup = true;
+            }
+            if(counter == 5) {
+                counter = 0;
+            }
+            ed.putInt("review", counter);
+            ed.apply();
+        }
+        if(openPopup) {
+            setupReviewpopup();
+        }
+    }
+
+    private void setupReviewpopup() {
+        reviewManager = ReviewManagerFactory.create(this);
+        Task<ReviewInfo> request = reviewManager.requestReviewFlow();
+        request.addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // We can get the ReviewInfo object
+                ReviewInfo reviewInfo = task.getResult();
+
+                Task <Void> flow = reviewManager.launchReviewFlow(this, reviewInfo);
+                flow.addOnCompleteListener(task1 -> {
+                    // The flow has finished. The API does not indicate whether the user
+                    // reviewed or not, or even whether the review dialog was shown.
+                });
+            } else {
+                // There was some problem, log or handle the error code.
+
+            }
+        });
     }
 
     private void updatePopupData() {
@@ -245,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.home);
         MainActivity.count += 1;
         if (MainActivity.count == 2) {
-
+            updateReviewData();
         } else if (MainActivity.count == 5) {
             showApplovinInterstitialAd();
         } else if (MainActivity.count > 5 && MainActivity.count % 4 == 0) {
