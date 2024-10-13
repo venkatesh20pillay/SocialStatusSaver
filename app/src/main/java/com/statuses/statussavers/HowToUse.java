@@ -5,9 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.applovin.mediation.MaxAd;
+import com.applovin.mediation.MaxAdViewAdListener;
+import com.applovin.mediation.MaxError;
+import com.applovin.mediation.ads.MaxAdView;
 
 
 public class HowToUse extends AppCompatActivity {
+
+    MaxAdView maxAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,6 +24,9 @@ public class HowToUse extends AppCompatActivity {
         if(getSupportActionBar()!=null) {
             getSupportActionBar().setTitle("How To Use");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        if(MainActivity.maxAdxInitialised) {
+            loadAppLovinAd();
         }
     }
 
@@ -31,5 +42,52 @@ public class HowToUse extends AppCompatActivity {
         {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void loadAppLovinAd() {
+        maxAdView = (MaxAdView) findViewById(R.id.maxAd);
+        maxAdView.setVisibility(View.VISIBLE);
+        maxAdView.setListener(new MaxAdViewAdListener() {
+            @Override
+            public void onAdExpanded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdCollapsed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoaded(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdDisplayed(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdHidden(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdClicked(MaxAd maxAd) {
+
+            }
+
+            @Override
+            public void onAdLoadFailed(String s, MaxError maxError) {
+                maxAdView.loadAd();
+            }
+
+            @Override
+            public void onAdDisplayFailed(MaxAd maxAd, MaxError maxError) {
+
+            }
+        });
+        maxAdView.loadAd();
     }
 }
