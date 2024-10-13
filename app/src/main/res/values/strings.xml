@@ -8,9 +8,9 @@
     <string name="howtouse2">2. View status</string>
     <string name="howtouse3">3. Comeback and save any image or video</string>
     <string name="howtouse4">4. Click on save</string>
-    <string name="nostatusimages"><u><i>No images to show. Know how to use Click here</i></u> </string>
-    <string name="nostatusvideos"><u><i>No videos to show. Know how to use Click here</i></u></string>
-    <string name="nosavedstatus"><u><i>No saved status to show. Know how to use Click here</i></u></string>
+    <string name="nostatusimages">No images to show. Want to know how to use <u>Click here</u></string>
+    <string name="nostatusvideos">No videos to show. Want to know how to use <u>Click here</u></string>
+    <string name="nosavedstatus">No saved status to show. Want to know how to use <u>Click here</u></string>
     <string name="app_id">ca-app-pub-4746738763099699~8237704869</string>
     <string name="image_fragment_banner_id">ca-app-pub-4746738763099699/3324121939</string>
     <string name="start_screen_banner_id">ca-app-pub-4746738763099699/3718927506</string>
@@ -29,4 +29,7 @@
     <string name="adx_banner_id_2">/22926502423/mix2ads_Status_Saver_banner</string>
     <string name="storage_permission">Please give storage permission to save status</string>
     <string name="storage_permission2">Please give access to .Statuses folder to get all the status</string>
+    <string name="step1">Open whatsapp and go to status section</string>
+    <string name="step2">View status on whatsapp and come back to this app</string>
+    <string name="step3">Select any image or video and tap the save icon at the bottom</string>
 </resources>
