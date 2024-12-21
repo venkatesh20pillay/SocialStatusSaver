@@ -147,12 +147,12 @@
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
-<!--    <com.applovin.mediation.ads.MaxAdView-->
-<!--        android:id="@+id/maxAd"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginBottom="10dp"-->
-<!--        android:background="@color/white"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        maxads:adUnitId="@string/applovin_banner_id" />-->
+    <com.applovin.mediation.ads.MaxAdView
+        android:id="@+id/maxAd"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        maxads:adUnitId="@string/applovin_banner_id" />
 </RelativeLayout>
