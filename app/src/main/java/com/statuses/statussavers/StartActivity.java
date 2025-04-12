@@ -32,8 +32,11 @@ import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdViewAdListener;
 import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
+import com.applovin.sdk.AppLovinMediationProvider;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkConfiguration;
+import com.applovin.sdk.AppLovinSdkInitializationConfiguration;
+
 import org.jetbrains.annotations.NotNull;
 import static android.os.Build.VERSION.SDK_INT;
 
@@ -65,13 +68,17 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void setApplovin() {
-        AppLovinSdk.getInstance(this).setMediationProvider("max");
-        AppLovinSdk.initializeSdk(this, new AppLovinSdk.SdkInitializationListener() {
+        AppLovinSdkInitializationConfiguration initConfig = AppLovinSdkInitializationConfiguration.builder("_MudM74bNJVdvK6QTPbWsZJ6vDPNKe5FewSXgwuxFv7gUivBxUg9FRqeTGZKBPZTl7byRprTRC93GbnEC9bLu5", this )
+                .setMediationProvider( AppLovinMediationProvider.MAX )
+                .build();
+        AppLovinSdk.getInstance( this ).initialize( initConfig, new AppLovinSdk.SdkInitializationListener()
+        {
             @Override
-            public void onSdkInitialized(AppLovinSdkConfiguration appLovinSdkConfiguration) {
+            public void onSdkInitialized(final AppLovinSdkConfiguration sdkConfig)
+            {
                 loadAppLovinAd();
             }
-        });
+        } );
     }
 
     private void loadAppLovinAd() {

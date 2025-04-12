@@ -32,4 +32,5 @@
     <string name="step1">Open whatsapp and go to status section</string>
     <string name="step2">View status on whatsapp and come back to this app</string>
     <string name="step3">Select any image or video and tap the save icon at the bottom</string>
+    <string name="applovin_key">_MudM74bNJVdvK6QTPbWsZJ6vDPNKe5FewSXgwuxFv7gUivBxUg9FRqeTGZKBPZTl7byRprTRC93GbnEC9bLu5</string>
 </resources>

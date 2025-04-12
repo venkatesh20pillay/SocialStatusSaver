@@ -14,8 +14,10 @@ import com.applovin.mediation.MaxAdViewAdListener;
 import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
 import com.applovin.mediation.ads.MaxInterstitialAd;
+import com.applovin.sdk.AppLovinMediationProvider;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkConfiguration;
+import com.applovin.sdk.AppLovinSdkInitializationConfiguration;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -122,16 +124,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setApplovin() {
-        AppLovinSdk.getInstance(this).setMediationProvider("max");
-        AppLovinSdk.initializeSdk(this, new AppLovinSdk.SdkInitializationListener() {
+        AppLovinSdkInitializationConfiguration initConfig = AppLovinSdkInitializationConfiguration.builder("_MudM74bNJVdvK6QTPbWsZJ6vDPNKe5FewSXgwuxFv7gUivBxUg9FRqeTGZKBPZTl7byRprTRC93GbnEC9bLu5", this )
+                .setMediationProvider( AppLovinMediationProvider.MAX )
+                .build();
+        AppLovinSdk.getInstance( this ).initialize( initConfig, new AppLovinSdk.SdkInitializationListener()
+        {
             @Override
-            public void onSdkInitialized(AppLovinSdkConfiguration appLovinSdkConfiguration) {
+            public void onSdkInitialized(final AppLovinSdkConfiguration sdkConfig)
+            {
                 MainActivity.maxAdxInitialised = true;
                 linearLayout.setVisibility(View.GONE);
                 loadAppLovinAd();
                 loadInterstitialAd();
             }
-        });
+        } );
     }
 
     private void loadInterstitialAd() {
