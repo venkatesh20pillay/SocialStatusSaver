@@ -234,13 +234,20 @@ public class Video extends AppCompatActivity {
             Field mUriField = VideoView.class.getDeclaredField("mUri");
             mUriField.setAccessible(true);
             mUri = (Uri)mUriField.get(mparticularvideo);
-            Intent videoshare = new Intent(Intent.ACTION_SEND);
-            videoshare.setType("video/mp4");
-            videoshare.putExtra(Intent.EXTRA_STREAM,mUri);
-
-            startActivity(Intent.createChooser(videoshare, "Share"));
+            if (mUri != null) {
+                Intent videoshare = new Intent(Intent.ACTION_SEND);
+                videoshare.setType("video/mp4");
+                videoshare.putExtra(Intent.EXTRA_STREAM, mUri);
+                startActivity(Intent.createChooser(videoshare, "Share"));
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(), "Unable to share", Toast.LENGTH_SHORT);
+                toast.show();
+                finish();
+            }
         } catch(Exception e) {
-
+            Toast toast = Toast.makeText(getApplicationContext(), "Unable to share", Toast.LENGTH_SHORT);
+            toast.show();
+            finish();
         }
     }
 

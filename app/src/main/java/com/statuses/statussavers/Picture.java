@@ -215,10 +215,16 @@ public class Picture extends AppCompatActivity {
         if (bitmapPath != null) {
             try {
                 Uri uri = Uri.parse(bitmapPath);
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("image/png");
-                intent.putExtra(Intent.EXTRA_STREAM, uri);
-                startActivity(Intent.createChooser(intent, "Share"));
+                if (uri != null) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("image/png");
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    startActivity(Intent.createChooser(intent, "Share"));
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Unable to share", Toast.LENGTH_SHORT);
+                    toast.show();
+                    finish();
+                }
             }
             catch (Exception e) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Unable to share", Toast.LENGTH_SHORT);

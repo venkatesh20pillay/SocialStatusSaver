@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showApplovinInterstitialAd() {
-        if (interstitialAd.isReady()) {
+        if (interstitialAd != null && interstitialAd.isReady()) {
             interstitialAd.showAd();
         }
     }
