@@ -258,6 +258,7 @@ public class VideosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadStatusData();
     }
 
     private void openHowToUse() {

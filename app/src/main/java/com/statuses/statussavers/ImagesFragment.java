@@ -62,6 +62,7 @@ public class ImagesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadStatusImages();
     }
 
     @Override

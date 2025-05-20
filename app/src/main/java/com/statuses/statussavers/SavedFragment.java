@@ -120,6 +120,7 @@ public class SavedFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadSavedStatuses();
     }
 
     protected void setupLauncher() {
