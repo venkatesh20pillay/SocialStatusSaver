@@ -211,30 +211,35 @@ public class Picture extends AppCompatActivity {
         BitmapDrawable drawable = (BitmapDrawable) mparticularimage.getDrawable();
         Bitmap bitmap = drawable.getBitmap();
 
-        String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(),bitmap,"title",null);
-        if (bitmapPath != null) {
-            try {
-                Uri uri = Uri.parse(bitmapPath);
-                if (uri != null) {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("image/png");
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    startActivity(Intent.createChooser(intent, "Share"));
-                } else {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Unable to share", Toast.LENGTH_SHORT);
-                    toast.show();
-                    finish();
-                }
+        Uri imageUri = null;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DISPLAY_NAME, "shared_image_" + System.currentTimeMillis() + ".png");
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+            values.put(MediaStore.Images.Media.IS_PENDING, 1);  // Optional but helps with newer Androids
+
+            imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            if (imageUri != null) {
+                OutputStream out = getContentResolver().openOutputStream(imageUri);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                out.close();
+
+                values.clear();
+                values.put(MediaStore.Images.Media.IS_PENDING, 0);  // Publish the image
+                getContentResolver().update(imageUri, values, null, null);
+            } else {
+                Toast.makeText(this, "Failed to create image Uri", Toast.LENGTH_SHORT).show();
             }
-            catch (Exception e) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Unable to share", Toast.LENGTH_SHORT);
-                toast.show();
-                finish();
-            }
-        } else {
-            Toast toast = Toast.makeText(getApplicationContext(), "Image not found", Toast.LENGTH_SHORT);
-            toast.show();
-            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Image save failed", Toast.LENGTH_SHORT).show();
+        }
+        if (imageUri != null) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("image/png");
+            intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(intent, "Share Image"));
         }
     }
 
