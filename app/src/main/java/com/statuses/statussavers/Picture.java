@@ -99,7 +99,7 @@ public class Picture extends AppCompatActivity {
                                 ContentResolver resolver = getBaseContext().getContentResolver();
                                 ContentValues contentValues = new ContentValues();
                                 contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
-                                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg");
+                                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
                                 String directoryPath1 = Environment.DIRECTORY_PICTURES + "/Status Saver";
                                 contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
                                 Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
