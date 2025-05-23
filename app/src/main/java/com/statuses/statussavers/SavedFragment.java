@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class SavedFragment extends Fragment {
@@ -54,7 +57,7 @@ public class SavedFragment extends Fragment {
         setupLauncher();
         setRefresh();
         setRefresh2();
-        setuplayout();
+        loadSavedStatuses();
         return root;
     }
 
@@ -62,7 +65,7 @@ public class SavedFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                setuplayout();
+                loadSavedStatuses();
                 refreshLayout.setRefreshing(true);
                 {
                     new Handler().postDelayed(new Runnable() {
@@ -80,7 +83,7 @@ public class SavedFragment extends Fragment {
         refreshLayout2.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                setuplayout();
+                loadSavedStatuses();
                 refreshLayout2.setRefreshing(true);
                 {
                     new Handler().postDelayed(new Runnable() {
@@ -94,7 +97,7 @@ public class SavedFragment extends Fragment {
         });
     }
 
-    private void setuplayout() {
+    private void setuplayout(ArrayList<ModelClass> data) {
         fileslist.clear();
         recyclerView.addItemDecoration(new RecyclerViewItemDecorator(3));
         recyclerView.setHasFixedSize(true);
@@ -102,6 +105,14 @@ public class SavedFragment extends Fragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
         recyclerView.setLayoutManager(gridLayoutManager);
         adapter = new Adapter(getActivity(), getData(), false);
+        if (data != null && !data.isEmpty()) {
+            refreshLayout2.setVisibility(View.GONE);
+            refreshLayout.setVisibility(View.VISIBLE);
+        } else {
+            refreshLayout2.setVisibility(View.VISIBLE);
+            refreshLayout.setVisibility(View.GONE);
+            placeholder.setText(getString(R.string.nosavedstatus));
+        }
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
@@ -109,6 +120,7 @@ public class SavedFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadSavedStatuses();
     }
 
     protected void setupLauncher() {
@@ -122,6 +134,65 @@ public class SavedFragment extends Fragment {
                     }
                 });
     }
+
+    private void loadSavedStatuses() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            try {
+                ArrayList<ModelClass> result = getSavedStatusesInBackground();
+
+                handler.post(() -> setuplayout(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                executor.shutdown();
+            }
+        });
+    }
+
+    private ArrayList<ModelClass> getSavedStatusesInBackground() {
+        ArrayList<ModelClass> filesList = new ArrayList<>();
+        File[] files;
+        ModelClass f;
+
+        try {
+            // Path 1: /Status Saver
+            String targetPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Status Saver";
+            File targetDir = new File(targetPath);
+            files = targetDir.listFiles();
+
+            if (files != null) {
+                for (File file : files) {
+                    f = new ModelClass(file.getAbsolutePath(), file.getName(), Uri.fromFile(file));
+                    if (!f.getUri().toString().endsWith(".nomedia")) {
+                        filesList.add(f);
+                    }
+                }
+            }
+
+            // Path 2: /Pictures/Status Saver
+            String targetPath1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                    + "/Status Saver";
+            File targetDir1 = new File(targetPath1);
+            File[] files1 = targetDir1.listFiles();
+
+            if (files1 != null) {
+                for (File file : files1) {
+                    f = new ModelClass(file.getAbsolutePath(), file.getName(), Uri.fromFile(file));
+                    if (!f.getUri().toString().endsWith(".nomedia")) {
+                        filesList.add(f);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return filesList;
+    }
+
 
     private ArrayList<ModelClass> getData() {
 

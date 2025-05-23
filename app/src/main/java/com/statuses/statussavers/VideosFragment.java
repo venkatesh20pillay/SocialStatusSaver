@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static android.os.Build.VERSION.SDK_INT;
 
@@ -49,7 +52,7 @@ public class VideosFragment extends Fragment {
         setupOnClickText();
         setRefresh();
         setRefresh2();
-        setuplayout();
+        loadStatusData();
         return root;
     }
 
@@ -63,7 +66,7 @@ public class VideosFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                setuplayout();
+                loadStatusData();
                 refreshLayout.setRefreshing(true);
                 {
                     new Handler().postDelayed(new Runnable() {
@@ -81,7 +84,7 @@ public class VideosFragment extends Fragment {
         refreshLayout2.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                setuplayout();
+                loadStatusData();
                 refreshLayout2.setRefreshing(true);
                 {
                     new Handler().postDelayed(new Runnable() {
@@ -95,17 +98,95 @@ public class VideosFragment extends Fragment {
         });
     }
 
-    private void setuplayout() {
+    private void setuplayout(ArrayList<ModelClass> data) {
         fileslist.clear();
         recyclerView.addItemDecoration(new RecyclerViewItemDecorator(3));
         recyclerView.setHasFixedSize(true);
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
         recyclerView.setLayoutManager(gridLayoutManager);
-        adapter = new Adapter(getActivity(), getData(), true);
+        adapter = new Adapter(getActivity(), data, true);
+        if (data != null && !data.isEmpty()) {
+            refreshLayout2.setVisibility(View.GONE);
+            refreshLayout.setVisibility(View.VISIBLE);
+        } else {
+            refreshLayout2.setVisibility(View.VISIBLE);
+            placeholder.setText(getString(R.string.nostatusvideos));
+            refreshLayout.setVisibility(View.GONE);
+        }
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
+
+    private void loadStatusData() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            try {
+                ArrayList<ModelClass> result = getDataInBackground();
+
+                handler.post(() -> setuplayout(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                executor.shutdown();
+            }
+        });
+    }
+
+    private ArrayList<ModelClass> getDataInBackground() {
+        ArrayList<ModelClass> filesList = new ArrayList<>();
+        File[] files = null;
+        ModelClass f;
+
+        try {
+            if (SDK_INT > 29) {
+                SharedPreferences sh = getActivity().getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
+                String uri = sh.getString("PATH", "");
+                if (uri != null && !uri.isEmpty()) {
+                    getContext().getContentResolver().takePersistableUriPermission(
+                            Uri.parse(uri), Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    DocumentFile fileDoc = DocumentFile.fromTreeUri(getContext(), Uri.parse(uri));
+                    if (fileDoc != null) {
+                        for (DocumentFile file : fileDoc.listFiles()) {
+                            f = new ModelClass(file.getUri().getPath(), file.getName(), file.getUri());
+                            if (file.getUri().toString().endsWith(".mp4") &&
+                                    !file.getUri().toString().endsWith(".nomedia")) {
+                                filesList.add(f);
+                            }
+                        }
+                    }
+                }
+            } else {
+                String targetPath = Environment.getExternalStorageDirectory().getAbsolutePath()
+                        + Constant.FOLDER_NAME + "Media/.Statuses";
+                File targetDir = new File(targetPath);
+                files = targetDir.listFiles();
+
+                if (files == null) {
+                    String fallbackPath = Environment.getExternalStorageDirectory().getAbsolutePath()
+                            + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses";
+                    File fallbackDir = new File(fallbackPath);
+                    files = fallbackDir.listFiles();
+                }
+
+                if (files != null) {
+                    for (File file : files) {
+                        f = new ModelClass(file.getAbsolutePath(), file.getName(), Uri.fromFile(file));
+                        if (f.getUri().toString().endsWith(".mp4")) {
+                            filesList.add(f);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return filesList;
+    }
+
 
     private ArrayList<ModelClass> getData() {
 
@@ -177,6 +258,7 @@ public class VideosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadStatusData();
     }
 
     private void openHowToUse() {
