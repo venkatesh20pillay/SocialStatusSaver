@@ -102,7 +102,7 @@ public class SavedFragment extends Fragment {
 
     private void setuplayout(ArrayList<ModelClass> data) {
         fileslist.clear();
-        adapter = new Adapter(getActivity(), getData(), false);
+        adapter = new Adapter(getActivity(), data, false);
         if (data != null && !data.isEmpty()) {
             refreshLayout2.setVisibility(View.GONE);
             refreshLayout.setVisibility(View.VISIBLE);
