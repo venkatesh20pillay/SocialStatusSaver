@@ -108,7 +108,7 @@ public class Video extends AppCompatActivity {
                             InputStream inputStream = resolver.openInputStream(Uri.parse(uri));
                             ContentValues contentValues = new ContentValues();
                             contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
-                            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "videos/mp4");
+                            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4");
                             String directoryPath1 = Environment.DIRECTORY_PICTURES + "/Status Saver";
                             contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
                             contentValues.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis()/1000);
@@ -211,10 +211,10 @@ public class Video extends AppCompatActivity {
         }
         else if (file.exists()) {
             ContentResolver resolver = getBaseContext().getContentResolver();
-            Uri picCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+            Uri picCollection = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
             ContentValues contentValues = new ContentValues();
             contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
-            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "videos/mp4");
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4");
             String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver";
             contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
             contentValues.put(MediaStore.Video.Media.IS_PENDING, 1);

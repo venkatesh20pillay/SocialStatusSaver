@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -21,7 +20,6 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import org.jetbrains.annotations.NotNull;
 import java.io.File;
@@ -52,6 +50,10 @@ public class ImagesFragment extends Fragment {
         refreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe);
         refreshLayout2 = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout_emptyView);
         placeholder = (TextView) root.findViewById(R.id.empty_view);
+        recyclerView.addItemDecoration(new RecyclerViewItemDecorator(3));
+        recyclerView.setHasFixedSize(true);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
+        recyclerView.setLayoutManager(gridLayoutManager);
         setupOnClickText();
         setRefresh();
         loadStatusImages();
@@ -72,11 +74,6 @@ public class ImagesFragment extends Fragment {
 
     private void setuplayout(ArrayList<ModelClass> data) {
         fileslist.clear();
-        recyclerView.addItemDecoration(new RecyclerViewItemDecorator(3));
-        recyclerView.setHasFixedSize(true);
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
-        recyclerView.setLayoutManager(gridLayoutManager);
         adapter = new Adapter(getActivity(), data, true);
         if (data != null && !data.isEmpty()) {
             refreshLayout2.setVisibility(View.GONE);
