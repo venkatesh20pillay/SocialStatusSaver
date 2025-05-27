@@ -314,23 +314,32 @@ public class StartActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                    // @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @SuppressLint("WrongConstant")
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-                            // There are no request codes
-                            Uri tree = result.getData().getData();
-                            String path = tree.toString();
-                            if(path != null) {
-                                getContentResolver().takePersistableUriPermission(Uri.parse(path), Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                if (path.endsWith("WhatsApp%2FMedia%2F.Statuses")) {
-                                    SharedPreferences sh = StartActivity.this.getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor ed = sh.edit();
-                                    ed.putString("PATH", path);
-                                    ed.apply();
-                                    setPermission2ButtonView();
-                                }
-                                else {
-                                    Toast.makeText(getApplicationContext(),"Please don't change directory and make sure its .Statuses", Toast.LENGTH_LONG).show();
+                            Intent data = result.getData();
+                            if (data != null) {
+                                Uri tree = data.getData();
+                                if (tree != null) {
+                                    int flags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                                    try {
+                                        getContentResolver().takePersistableUriPermission(tree, flags);
+                                    } catch (SecurityException e) {
+                                        Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+
+                                    String path = tree.toString();
+                                    if (path.endsWith("WhatsApp%2FMedia%2F.Statuses")) {
+                                        SharedPreferences sh = StartActivity.this.getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor ed = sh.edit();
+                                        ed.putString("PATH", path);
+                                        ed.apply();
+                                        setPermission2ButtonView();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Please don't change directory and make sure it's .Statuses", Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             }
                         }
