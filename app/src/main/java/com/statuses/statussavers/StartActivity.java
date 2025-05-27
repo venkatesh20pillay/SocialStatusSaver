@@ -326,7 +326,7 @@ public class StartActivity extends AppCompatActivity {
                                     try {
                                         getContentResolver().takePersistableUriPermission(tree, flags);
                                     } catch (SecurityException e) {
-                                        Toast.makeText(getApplicationContext(), "Failed to persist permission: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
                                         return;
                                     }
 
