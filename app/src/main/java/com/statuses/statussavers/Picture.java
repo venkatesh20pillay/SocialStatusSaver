@@ -116,7 +116,7 @@ public class Picture extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     } else {
-                            if (SDK_INT >= 29) {
+                            if (SDK_INT > 29) {
                                 delete(file1, filename);
                             }
                             else {
@@ -139,7 +139,9 @@ public class Picture extends AppCompatActivity {
     private void delete(File file, String name) {
         Uri uri1 = convertFileToContentUri(file, name);
         if (uri1 == null) {
-            return;
+            Toast toast = Toast.makeText(getApplicationContext(), "Video not found", Toast.LENGTH_SHORT);
+            toast.show();
+            finish();
         }
         try {
             ContentResolver resolver = getBaseContext().getContentResolver();
@@ -188,23 +190,10 @@ public class Picture extends AppCompatActivity {
             cursor.close();
             return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ""+id);
         }
-        else if (file.exists()) {
-                ContentResolver resolver = getBaseContext().getContentResolver();
-                Uri picCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
-                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg");
-                String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver";
-                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
-                contentValues.put(MediaStore.Images.Media.IS_PENDING, 1);
-                Uri imageUri = resolver.insert(picCollection, contentValues);
-                contentValues.clear();
-                contentValues.put(MediaStore.Images.Media.IS_PENDING, 0);
-                return imageUri;
-            }
-            else {
-                return null;
-            }
+        if (cursor != null) {
+            cursor.close();
+        }
+        return null;
     }
 
     private void shareImage() {
