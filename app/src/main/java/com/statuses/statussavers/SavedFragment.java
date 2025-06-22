@@ -103,14 +103,21 @@ public class SavedFragment extends Fragment {
     private void setuplayout(ArrayList<ModelClass> data) {
         fileslist.clear();
         adapter = new Adapter(getActivity(), data, false);
+
         if (data != null && !data.isEmpty()) {
             refreshLayout2.setVisibility(View.GONE);
             refreshLayout.setVisibility(View.VISIBLE);
         } else {
             refreshLayout2.setVisibility(View.VISIBLE);
             refreshLayout.setVisibility(View.GONE);
-            placeholder.setText(getString(R.string.nosavedstatus));
+
+            if (isAdded()) {
+                placeholder.setText(getString(R.string.nosavedstatus));
+            } else {
+                placeholder.setText("No saved status to show."); // or keep it empty / a safe fallback
+            }
         }
+
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

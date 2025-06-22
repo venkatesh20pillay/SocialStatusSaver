@@ -211,7 +211,7 @@ public class Video extends AppCompatActivity {
         }
         else if (file.exists()) {
             ContentResolver resolver = getBaseContext().getContentResolver();
-            Uri picCollection = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+            Uri picCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
             ContentValues contentValues = new ContentValues();
             contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
             contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4");

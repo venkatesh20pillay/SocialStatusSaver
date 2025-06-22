@@ -75,14 +75,22 @@ public class ImagesFragment extends Fragment {
     private void setuplayout(ArrayList<ModelClass> data) {
         fileslist.clear();
         adapter = new Adapter(getActivity(), data, true);
+
         if (data != null && !data.isEmpty()) {
             refreshLayout2.setVisibility(View.GONE);
             refreshLayout.setVisibility(View.VISIBLE);
         } else {
             refreshLayout2.setVisibility(View.VISIBLE);
-            placeholder.setText(getString(R.string.nostatusimages));
+
+            if (isAdded()) {
+                placeholder.setText(getString(R.string.nostatusimages));
+            } else {
+                placeholder.setText("No images to show."); // fallback to empty or some safe string
+            }
+
             refreshLayout.setVisibility(View.GONE);
         }
+
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

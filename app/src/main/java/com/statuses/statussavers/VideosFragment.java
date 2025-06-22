@@ -104,14 +104,23 @@ public class VideosFragment extends Fragment {
     private void setuplayout(ArrayList<ModelClass> data) {
         fileslist.clear();
         adapter = new Adapter(getActivity(), data, true);
+
         if (data != null && !data.isEmpty()) {
             refreshLayout2.setVisibility(View.GONE);
             refreshLayout.setVisibility(View.VISIBLE);
         } else {
             refreshLayout2.setVisibility(View.VISIBLE);
-            placeholder.setText(getString(R.string.nostatusvideos));
+
+            if (isAdded()) {
+                placeholder.setText(getString(R.string.nostatusvideos));
+            } else {
+                // Optional: fallback text or do nothing
+                placeholder.setText("No videos to show.");
+            }
+
             refreshLayout.setVisibility(View.GONE);
         }
+
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
