@@ -162,6 +162,7 @@ public class Video extends AppCompatActivity {
             Toast toast = Toast.makeText(getApplicationContext(), "Video not found", Toast.LENGTH_SHORT);
             toast.show();
             finish();
+            return;
         }
         try {
             ContentResolver resolver = getBaseContext().getContentResolver();
