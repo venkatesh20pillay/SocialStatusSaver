@@ -138,7 +138,7 @@ public class Video extends AppCompatActivity {
                         toast.show();
                     }
                     else {
-                        if (SDK_INT >= 29) {
+                        if (SDK_INT > 29) {
                             delete(file1, filename);
                         } else {
                             org.apache.commons.io.FileUtils.delete(file1);
@@ -159,7 +159,9 @@ public class Video extends AppCompatActivity {
     private void delete(File file, String name) {
         Uri uri1 = convertFileToContentUri(file, name);
         if (uri1 == null) {
-            return;
+            Toast toast = Toast.makeText(getApplicationContext(), "Video not found", Toast.LENGTH_SHORT);
+            toast.show();
+            finish();
         }
         try {
             ContentResolver resolver = getBaseContext().getContentResolver();
@@ -209,23 +211,10 @@ public class Video extends AppCompatActivity {
             cursor.close();
             return Uri.withAppendedPath(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, ""+id);
         }
-        else if (file.exists()) {
-            ContentResolver resolver = getBaseContext().getContentResolver();
-            Uri picCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
-            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4");
-            String directoryPath1 = Environment.DIRECTORY_PICTURES + "/StatusSaver";
-            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directoryPath1);
-            contentValues.put(MediaStore.Video.Media.IS_PENDING, 1);
-            Uri imageUri = resolver.insert(picCollection, contentValues);
-            contentValues.clear();
-            contentValues.put(MediaStore.Video.Media.IS_PENDING, 0);
-            return imageUri;
+        if (cursor != null) {
+            cursor.close();
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
     private void shareVideo() {
