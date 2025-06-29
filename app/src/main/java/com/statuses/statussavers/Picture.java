@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -142,6 +143,7 @@ public class Picture extends AppCompatActivity {
             Toast toast = Toast.makeText(getApplicationContext(), "Video not found", Toast.LENGTH_SHORT);
             toast.show();
             finish();
+            return;
         }
         try {
             ContentResolver resolver = getBaseContext().getContentResolver();
@@ -197,8 +199,14 @@ public class Picture extends AppCompatActivity {
     }
 
     private void shareImage() {
-        BitmapDrawable drawable = (BitmapDrawable) mparticularimage.getDrawable();
-        Bitmap bitmap = drawable.getBitmap();
+        Drawable drawable = mparticularimage.getDrawable();
+
+        if (!(drawable instanceof BitmapDrawable)) {
+            Toast.makeText(this, "Image not available to share", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
         Uri imageUri = null;
         try {
