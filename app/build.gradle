@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -29,6 +30,9 @@ android {
     buildFeatures {
         viewBinding true
     }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
 }
 
 dependencies {
@@ -52,4 +56,5 @@ dependencies {
     implementation 'com.applovin.mediation:inmobi-adapter:+'
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.core:core-ktx:1.17.0'
 }
