@@ -76,7 +76,7 @@ class SavedFragment : Fragment() {
 
     private fun setuplayout(data: ArrayList<ModelClass>) {
         fileslist.clear()
-        adapter = Adapter(activity, data, false)
+        adapter = activity?.let { Adapter(it, data, false) }
         if (data.isNotEmpty()) {
             refreshLayout2.visibility = View.GONE
             refreshLayout.visibility = View.VISIBLE

@@ -59,7 +59,7 @@ class ImagesFragment : Fragment() {
 
     private fun setuplayout(data: ArrayList<ModelClass>) {
         fileslist.clear()
-        adapter = Adapter(activity, data, true)
+        adapter = activity?.let { Adapter(it, data, true) }
 
         if (data.isNotEmpty()) {
             refreshLayout2.visibility = View.GONE
