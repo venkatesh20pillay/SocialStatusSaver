@@ -13,6 +13,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -20,16 +21,17 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
 import org.apache.commons.io.FileUtils
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
-import java.io.OutputStream
 import java.util.*
 
 class Picture : AppCompatActivity() {
@@ -49,7 +51,13 @@ class Picture : AppCompatActivity() {
         share = findViewById(R.id.share)
         download = findViewById(R.id.download)
 
-        share.setOnClickListener { shareImage() }
+        share.setOnClickListener {
+            if (VERSION.SDK_INT >= 30) {
+                shareImage()
+            } else {
+                shareImage2()
+            }
+        }
 
         val intent = intent
         val destpath = intent.getStringExtra("DEST_PATH")
@@ -171,6 +179,37 @@ class Picture : AppCompatActivity() {
         }
         return null
     }
+
+    private fun shareImage2() {
+        val bitmapValue = mparticularimage.getDrawable().toBitmap()
+        val uri = getImageToShare(bitmapValue)
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            putExtra(Intent.EXTRA_STREAM, uri)
+            type = "image/png"
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(Intent.createChooser(intent, "Share Via"))
+    }
+
+    private fun getImageToShare(bitmap: Bitmap): Uri? {
+        var uri: Uri? = null
+        try {
+            val imageFolder = File(cacheDir, "images").apply { mkdirs() }
+            val file = File(imageFolder, "shared_image.png")
+            FileOutputStream(file).use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 90, outputStream)
+            }
+            uri = FileProvider.getUriForFile(
+                this,
+                "com.statuses.statussavers.provider",
+                file
+            )
+        } catch (e: Exception) {
+            Toast.makeText(this, e.message ?: "Error sharing image", Toast.LENGTH_LONG).show()
+        }
+        return uri
+    }
+
 
     private fun shareImage() {
         val drawable = mparticularimage.drawable
