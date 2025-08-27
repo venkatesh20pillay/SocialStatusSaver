@@ -118,7 +118,7 @@ class VideosFragment : Fragment() {
         var files: Array<File>? = null
 
         try {
-            if (android.os.Build.VERSION.SDK_INT > 29) {
+           if (android.os.Build.VERSION.SDK_INT > 29) {
                 val sh: SharedPreferences? = activity?.getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE)
                 val uri = sh?.getString("PATH", "")
                 if (!uri.isNullOrEmpty()) {
