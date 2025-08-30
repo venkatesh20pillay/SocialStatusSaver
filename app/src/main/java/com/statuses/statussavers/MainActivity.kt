@@ -51,19 +51,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
-        val rootView = binding!!.tabs
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
-        val viewPager = binding!!.viewPager
-        viewPager.adapter = sectionsPagerAdapter
         val tabs = binding!!.tabs
-        tabs.setupWithViewPager(viewPager)
-        ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(tabs) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding!!.appBarLayout.setPadding(0, systemBars.top + 150, 0, 0)
             binding!!.viewPager.updatePadding(bottom = systemBars.bottom + 200)
             binding!!.bottomNavigationView.updatePadding(bottom = systemBars.bottom)
             WindowInsetsCompat.CONSUMED
         }
+        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+        val viewPager = binding!!.viewPager
+        viewPager.adapter = sectionsPagerAdapter
+        tabs.setupWithViewPager(viewPager)
         bottomNavigationView = findViewById<View>(R.id.bottomNavigationView) as BottomNavigationView
         textView = findViewById<View>(R.id.adSpace) as TextView
         linearLayout = findViewById<View>(R.id.linearlayout) as LinearLayout
