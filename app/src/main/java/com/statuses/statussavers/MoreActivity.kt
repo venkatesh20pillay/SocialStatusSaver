@@ -5,22 +5,41 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.cardview.widget.CardView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MoreActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var cardView: CardView
+    private lateinit var rootLayout: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_more)
-
+        rootLayout = findViewById(R.id.rootLayout)
         bottomNavigationView = findViewById(R.id.bottomNavigationViewMore)
         cardView = findViewById(R.id.cardView)
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            cardView.updatePadding(top = 150)
+
+            bottomNavigationView.updatePadding(
+                bottom = systemBars.bottom
+            )
+
+            insets
+        }
 
         setupBottomBar()
         setupCardView()

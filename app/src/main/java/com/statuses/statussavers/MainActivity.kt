@@ -8,11 +8,18 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
+import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updatePadding
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdListener
 import com.applovin.mediation.MaxAdViewAdListener
@@ -44,14 +51,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+        val rootView = binding!!.tabs
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         val viewPager = binding!!.viewPager
         viewPager.adapter = sectionsPagerAdapter
         val tabs = binding!!.tabs
+        tabs.setupWithViewPager(viewPager)
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding!!.appBarLayout.setPadding(0, systemBars.top + 150, 0, 0)
+            binding!!.viewPager.updatePadding(bottom = systemBars.bottom + 200)
+            binding!!.bottomNavigationView.updatePadding(bottom = systemBars.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
         bottomNavigationView = findViewById<View>(R.id.bottomNavigationView) as BottomNavigationView
         textView = findViewById<View>(R.id.adSpace) as TextView
         linearLayout = findViewById<View>(R.id.linearlayout) as LinearLayout
-        tabs.setupWithViewPager(viewPager)
         setupBottomBar()
         setApplovin()
         updatePopupData()
