@@ -19,6 +19,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.NonNull
@@ -27,6 +28,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.bumptech.glide.Glide
 import org.apache.commons.io.FileUtils
 import java.io.File
@@ -39,17 +43,24 @@ class Picture : AppCompatActivity() {
     private lateinit var mparticularimage: ImageView
     private lateinit var download: ImageView
     private lateinit var share: ImageView
+    private lateinit var rootLayout: View
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_picture)
         supportActionBar?.title = "Picture"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        rootLayout = findViewById(R.id.root)
 
         mparticularimage = findViewById(R.id.particularimage)
         share = findViewById(R.id.share)
         download = findViewById(R.id.download)
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            rootLayout.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
 
         share.setOnClickListener {
             if (VERSION.SDK_INT >= 30) {

@@ -31,13 +31,11 @@ class MoreActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-
-            cardView.updatePadding(top = 150)
-
-            bottomNavigationView.updatePadding(
-                bottom = systemBars.bottom
-            )
-
+            rootLayout.updatePadding(top = systemBars.top)
+            val layoutParams = cardView.layoutParams as ViewGroup.MarginLayoutParams
+            layoutParams.setMargins(15, 180, 15, 0)
+            cardView.layoutParams = layoutParams
+            bottomNavigationView.updatePadding(bottom = systemBars.bottom)
             insets
         }
 
