@@ -26,6 +26,9 @@ import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -39,6 +42,7 @@ class Video : AppCompatActivity() {
     private lateinit var share: ImageView
     private lateinit var mparticularvideo: VideoView
     private lateinit var uri1: Uri
+    private lateinit var rootLayout: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +51,17 @@ class Video : AppCompatActivity() {
         setContentView(R.layout.activity_video)
         supportActionBar?.title = "Video"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        rootLayout = findViewById(R.id.root_layout)
         mparticularvideo = findViewById(R.id.particularvideo)
         share = findViewById(R.id.share)
         download = findViewById(R.id.download)
         share.setOnClickListener { shareVideo() }
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            rootLayout.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
 
         val intent = intent
         val destpath = intent.getStringExtra("DEST_PATH_VIDEO")

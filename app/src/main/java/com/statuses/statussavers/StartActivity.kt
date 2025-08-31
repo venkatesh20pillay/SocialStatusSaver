@@ -22,6 +22,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdViewAdListener
 import com.applovin.mediation.MaxError
@@ -41,9 +44,25 @@ class StartActivity : AppCompatActivity() {
     var imageViewSecond: ImageView? = null
     var useThisFolder: ImageView? = null
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start_v2)
+        val rootView = findViewById<View>(R.id.root_layout)  // Make sure you have a root layout
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, insets ->
+
+            // Get insets for system bars
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Adjust padding for root layout
+            rootView.updatePadding(
+                top = systemBarsInsets.top,  // Adjust top padding for status bar
+                bottom = systemBarsInsets.bottom  // Adjust bottom padding for navigation bar
+            )
+
+            // Return consumed insets to indicate that we have handled them
+            WindowInsetsCompat.CONSUMED
+        }
         permission1 = findViewById<View>(R.id.permission1) as TextView
         permission2 = findViewById<View>(R.id.permission2) as TextView
         permission1Button = findViewById<View>(R.id.permission1Button) as Button
@@ -111,6 +130,7 @@ class StartActivity : AppCompatActivity() {
             val intent = Intent(this@StartActivity, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
+            finish()
         }
     }
 
