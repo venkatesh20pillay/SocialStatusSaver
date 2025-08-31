@@ -24,7 +24,6 @@ import java.util.concurrent.Executors
 class VideosFragment : Fragment() {
 
     private var adapter: Adapter? = null
-    private lateinit var files: Array<File>
     private lateinit var recyclerView: RecyclerView
     private lateinit var refreshLayout: SwipeRefreshLayout
     private var fileslist = ArrayList<ModelClass>()
@@ -76,7 +75,7 @@ class VideosFragment : Fragment() {
 
     private fun setuplayout(data: ArrayList<ModelClass>?) {
         fileslist.clear()
-        adapter = data?.let { Adapter(activity, it, true) }
+        adapter = data?.let { activity?.let { it1 -> Adapter(it1, it, true) } }
 
         if (!data.isNullOrEmpty()) {
             refreshLayout2.visibility = View.GONE
@@ -119,7 +118,7 @@ class VideosFragment : Fragment() {
         var files: Array<File>? = null
 
         try {
-            if (android.os.Build.VERSION.SDK_INT > 29) {
+           if (android.os.Build.VERSION.SDK_INT > 29) {
                 val sh: SharedPreferences? = activity?.getSharedPreferences("DATA_PATH", Context.MODE_PRIVATE)
                 val uri = sh?.getString("PATH", "")
                 if (!uri.isNullOrEmpty()) {
@@ -129,9 +128,14 @@ class VideosFragment : Fragment() {
                     )
                     val fileDoc = context?.let { DocumentFile.fromTreeUri(it, Uri.parse(uri)) }
                     fileDoc?.listFiles()?.forEach { file ->
-                        val f = ModelClass(file.uri.path, file.name, file.uri)
+                        val f = file.uri.path?.let { file.name?.let { it1 ->
+                            ModelClass(it,
+                                it1, file.uri)
+                        } }
                         if (file.uri.toString().endsWith(".mp4") && !file.uri.toString().endsWith(".nomedia")) {
-                            filesList.add(f)
+                            if (f != null) {
+                                filesList.add(f)
+                            }
                         }
                     }
                 }
