@@ -116,14 +116,15 @@ object SubscriptionManager : PurchasesUpdatedListener {
         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
             for (purchase in purchases) {
                 if (purchase.products.contains(SUBSCRIPTION_PRODUCT_ID)) {
-                    isSubscribed = true
                     if (!purchase.isAcknowledged) {
                         val acknowledgeParams = AcknowledgePurchaseParams.newBuilder()
                             .setPurchaseToken(purchase.purchaseToken)
                             .build()
 
                         billingClient?.acknowledgePurchase(acknowledgeParams) { ackResult ->
-                            postCallback("Subscribed Successfully", isSuccessFull = true)
+                            if (ackResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                                postCallback("Subscribed Successfully", isSuccessFull = true)
+                            }
                         }
                     }
                 }
