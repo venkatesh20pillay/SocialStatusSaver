@@ -69,11 +69,14 @@ class StartActivity : AppCompatActivity() {
         permission2Button = findViewById<View>(R.id.permission2Button) as Button
         imageViewSecond = findViewById<View>(R.id.second) as ImageView
         useThisFolder = findViewById<View>(R.id.usethisfolder2) as ImageView
+        maxAdView = findViewById<View>(R.id.maxAd) as MaxAdView
         setupLauncher()
         setView()
         setupOnClickButton()
         if(!HelperClass.adsDisabled) {
             setApplovin()
+        } else {
+            maxAdView!!.visibility = View.GONE
         }
     }
 
@@ -88,7 +91,6 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun loadAppLovinAd() {
-        maxAdView = findViewById<View>(R.id.maxAd) as MaxAdView
         maxAdView!!.setListener(object : MaxAdViewAdListener {
             override fun onAdExpanded(maxAd: MaxAd) {
             }

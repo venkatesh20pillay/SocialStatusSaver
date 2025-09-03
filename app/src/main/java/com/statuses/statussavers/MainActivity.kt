@@ -170,6 +170,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadAppLovinAd() {
+        adSpacetextView!!.visibility = View.GONE
         maxAdView!!.visibility = View.VISIBLE
         maxAdView!!.setListener(object : MaxAdViewAdListener {
             override fun onAdExpanded(maxAd: MaxAd) {
