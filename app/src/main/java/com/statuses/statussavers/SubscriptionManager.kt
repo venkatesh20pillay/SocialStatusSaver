@@ -42,7 +42,7 @@ object SubscriptionManager : PurchasesUpdatedListener {
                 isSubscribed = purchasesList.any { purchase ->
                     purchase.products.contains(SUBSCRIPTION_PRODUCT_ID) &&
                             purchase.purchaseState == Purchase.PurchaseState.PURCHASED &&
-                            !purchase.isAcknowledged.not()
+                            purchase.isAcknowledged
                 }
                 if (isSubscribed) {
                     isSubscribedChecked(true)
