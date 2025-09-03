@@ -33,11 +33,7 @@ class Splash : AppCompatActivity() {
             if (isSetupFinished) {
                 SubscriptionManager.checkSubscription { isSubscribed ->
                     Handler(Looper.getMainLooper()).post {
-                        if (isSubscribed) {
-                            HelperClass.adsDisabled = true
-                        } else {
-                            HelperClass.adsDisabled = false
-                        }
+                        HelperClass.adsDisabled = isSubscribed
                         startPremissionCheck()
                     }
                 }

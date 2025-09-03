@@ -46,7 +46,6 @@ class RewardAds : AppCompatActivity() {
     }
 
     private fun startPurchaseFlow() {
-        Toast.makeText(this, "Purchase flow", Toast.LENGTH_SHORT).show()
         SubscriptionManager.onPurchaseCallback = { value, isSuccessFull ->
             Toast.makeText(this, value, Toast.LENGTH_LONG).show()
             if (isSuccessFull) {

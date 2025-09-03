@@ -21,6 +21,8 @@ object SubscriptionManager : PurchasesUpdatedListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     onSetupFinished(true)
+                } else {
+                    onSetupFinished(false)
                 }
             }
 
@@ -30,7 +32,7 @@ object SubscriptionManager : PurchasesUpdatedListener {
         })
     }
 
-    public fun checkSubscription(isSubscribedChecked: (Boolean) -> Unit) {
+    fun checkSubscription(isSubscribedChecked: (Boolean) -> Unit) {
         billingClient?.queryPurchasesAsync(
             QueryPurchasesParams.newBuilder()
                 .setProductType(BillingClient.ProductType.SUBS)
