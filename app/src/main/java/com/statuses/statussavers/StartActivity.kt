@@ -72,7 +72,9 @@ class StartActivity : AppCompatActivity() {
         setupLauncher()
         setView()
         setupOnClickButton()
-        setApplovin()
+        if(!HelperClass.adsDisabled) {
+            setApplovin()
+        }
     }
 
     private fun setApplovin() {

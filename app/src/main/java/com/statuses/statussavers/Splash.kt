@@ -6,7 +6,9 @@ import android.content.pm.PackageManager
 import android.os.Build.VERSION
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 
@@ -22,6 +24,32 @@ class Splash : AppCompatActivity() {
         )
 
         Handler().postDelayed({
+            initialChecks()
+        }, SPLASH_TIMER.toLong())
+    }
+
+    private fun initialChecks() {
+        SubscriptionManager.initBillingClient(this) { isSetupFinished ->
+            if (isSetupFinished) {
+                SubscriptionManager.checkSubscription { isSubscribed ->
+                    Handler(Looper.getMainLooper()).post {
+                        if (isSubscribed) {
+                            HelperClass.adsDisabled = true
+                        } else {
+                            HelperClass.adsDisabled = false
+                        }
+                        startPremissionCheck()
+                    }
+                }
+            } else {
+                Handler(Looper.getMainLooper()).post {
+                    startPremissionCheck()
+                }
+            }
+        }
+    }
+
+    private fun startPremissionCheck() {
             val intent = if (checkBothPermission()) {
                 Intent(this@Splash, MainActivity::class.java)
             } else {
@@ -29,7 +57,6 @@ class Splash : AppCompatActivity() {
             }
             startActivity(intent)
             finish()
-        }, SPLASH_TIMER.toLong())
     }
 
     private fun checkBothPermission(): Boolean {
@@ -84,6 +111,6 @@ class Splash : AppCompatActivity() {
     }
 
     companion object {
-        const val SPLASH_TIMER: Int = 2000
+        const val SPLASH_TIMER: Int = 1000
     }
 }

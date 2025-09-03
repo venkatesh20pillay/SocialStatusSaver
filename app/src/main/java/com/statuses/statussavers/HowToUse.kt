@@ -45,7 +45,7 @@ class HowToUse : AppCompatActivity() {
             it.title = "How To Use"
             it.setDisplayHomeAsUpEnabled(true)
         }
-        if (MainActivity.maxAdxInitialised) {
+        if (!HelperClass.adsDisabled && MainActivity.maxAdxInitialised) {
             loadAppLovinAd()
         }
     }
