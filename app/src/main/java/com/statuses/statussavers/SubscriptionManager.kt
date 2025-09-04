@@ -7,11 +7,11 @@ import android.os.Handler
 import android.os.Looper
 import com.android.billingclient.api.*
 
-object SubscriptionManager : PurchasesUpdatedListener {
+class SubscriptionManager : PurchasesUpdatedListener {
 
     private var billingClient: BillingClient? = null
     var isSubscribed: Boolean = false
-    private const val SUBSCRIPTION_PRODUCT_ID = "year_100" // From Play Console
+    private val SUBSCRIPTION_PRODUCT_ID = "year_100" // From Play Console
     var onPurchaseCallback: ((String, Boolean) -> Unit)? = null
 
     fun initBillingClient(context: Context, onSetupFinished: (Boolean) -> Unit) {
@@ -39,14 +39,29 @@ object SubscriptionManager : PurchasesUpdatedListener {
                 .build()
         ) { billingResult, purchasesList ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                isSubscribed = purchasesList.any { purchase ->
+                val subscriptionPurchase = purchasesList.find { purchase ->
                     purchase.products.contains(SUBSCRIPTION_PRODUCT_ID) &&
-                            purchase.purchaseState == Purchase.PurchaseState.PURCHASED &&
-                            purchase.isAcknowledged
+                            purchase.purchaseState == Purchase.PurchaseState.PURCHASED
                 }
-                if (isSubscribed) {
-                    isSubscribedChecked(true)
+                if (subscriptionPurchase != null) {
+                    if (!subscriptionPurchase.isAcknowledged) {
+                        val acknowledgeParams = AcknowledgePurchaseParams.newBuilder()
+                            .setPurchaseToken(subscriptionPurchase.purchaseToken)
+                            .build()
+                        billingClient?.acknowledgePurchase(acknowledgeParams) { ackResult ->
+                            if (ackResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                                isSubscribedChecked(true)
+                            } else {
+                                // Could not acknowledge, treat as not subscribed or retry
+                                isSubscribedChecked(false)
+                            }
+                        }
+                    } else {
+                        // Already acknowledged
+                        isSubscribedChecked(true)
+                    }
                 } else {
+                    // No active purchased subscription
                     isSubscribedChecked(false)
                 }
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.SERVICE_DISCONNECTED)  {
@@ -70,7 +85,31 @@ object SubscriptionManager : PurchasesUpdatedListener {
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ERROR)  {
                 isSubscribedChecked(true)
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED)  {
-                isSubscribedChecked(true)
+                val subscriptionPurchase = purchasesList.find { purchase ->
+                    purchase.products.contains(SUBSCRIPTION_PRODUCT_ID) &&
+                            purchase.purchaseState == Purchase.PurchaseState.PURCHASED
+                }
+                if (subscriptionPurchase != null) {
+                    if (!subscriptionPurchase.isAcknowledged) {
+                        val acknowledgeParams = AcknowledgePurchaseParams.newBuilder()
+                            .setPurchaseToken(subscriptionPurchase.purchaseToken)
+                            .build()
+                        billingClient?.acknowledgePurchase(acknowledgeParams) { ackResult ->
+                            if (ackResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                                isSubscribedChecked(true)
+                            } else {
+                                // Could not acknowledge, treat as not subscribed or retry
+                                isSubscribedChecked(false)
+                            }
+                        }
+                    } else {
+                        // Already acknowledged
+                        isSubscribedChecked(true)
+                    }
+                } else {
+                    // No active purchased subscription
+                    isSubscribedChecked(false)
+                }
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_NOT_OWNED)  {
                 isSubscribedChecked(false)
             } else {
@@ -124,8 +163,12 @@ object SubscriptionManager : PurchasesUpdatedListener {
                         billingClient?.acknowledgePurchase(acknowledgeParams) { ackResult ->
                             if (ackResult.responseCode == BillingClient.BillingResponseCode.OK) {
                                 postCallback("Subscribed Successfully", isSuccessFull = true)
+                            } else {
+                                postCallback("Acknowledgment Failed Please restart app", isSuccessFull = false)
                             }
                         }
+                    } else {
+                        postCallback("Subscribed Successfully", isSuccessFull = true)
                     }
                 }
             }
@@ -150,7 +193,35 @@ object SubscriptionManager : PurchasesUpdatedListener {
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ERROR)  {
             postCallback("Purchase Failed", isSuccessFull = false)
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED)  {
-            postCallback("Purchase Failed", isSuccessFull = false)
+            billingClient?.queryPurchasesAsync(
+                QueryPurchasesParams.newBuilder()
+                    .setProductType(BillingClient.ProductType.SUBS)
+                    .build()
+            ) { result, purchasesList ->
+                if (result.responseCode == BillingClient.BillingResponseCode.OK && purchasesList.isNotEmpty()) {
+                    val ownedPurchase = purchasesList.find { it.products.contains(SUBSCRIPTION_PRODUCT_ID) }
+                    if (ownedPurchase != null) {
+                        if (!ownedPurchase.isAcknowledged) {
+                            val acknowledgeParams = AcknowledgePurchaseParams.newBuilder()
+                                .setPurchaseToken(ownedPurchase.purchaseToken)
+                                .build()
+                            billingClient?.acknowledgePurchase(acknowledgeParams) { ackResult ->
+                                if (ackResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                                    postCallback("Subscribed Successfully", isSuccessFull = true)
+                                } else {
+                                    postCallback("Acknowledgment Failed Please Restart App", isSuccessFull = false)
+                                }
+                            }
+                        } else {
+                            postCallback("Subscribed Successfully", isSuccessFull = true)
+                        }
+                    } else {
+                        postCallback("Purchase Failed", isSuccessFull = false)
+                    }
+                } else {
+                    postCallback("Purchase Failed", isSuccessFull = false)
+                }
+            }
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_NOT_OWNED)  {
             postCallback("Purchase Failed", isSuccessFull = false)
         }
@@ -163,5 +234,10 @@ object SubscriptionManager : PurchasesUpdatedListener {
         Handler(Looper.getMainLooper()).post {
             onPurchaseCallback?.let { it(msg, isSuccessFull) }
         }
+    }
+
+    fun endConnection() {
+        billingClient?.endConnection()
+        billingClient = null
     }
 }
