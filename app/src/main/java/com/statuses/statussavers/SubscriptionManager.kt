@@ -189,7 +189,35 @@ class SubscriptionManager : PurchasesUpdatedListener {
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_UNAVAILABLE)  {
             postCallback("Purchase Failed", isSuccessFull = false)
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.DEVELOPER_ERROR)  {
-            postCallback("Purchase Failed", isSuccessFull = false)
+            billingClient?.queryPurchasesAsync(
+                QueryPurchasesParams.newBuilder()
+                    .setProductType(BillingClient.ProductType.SUBS)
+                    .build()
+            ) { result, purchasesList ->
+                if (result.responseCode == BillingClient.BillingResponseCode.OK && purchasesList.isNotEmpty()) {
+                    val ownedPurchase = purchasesList.find { it.products.contains(SUBSCRIPTION_PRODUCT_ID) }
+                    if (ownedPurchase != null) {
+                        if (!ownedPurchase.isAcknowledged) {
+                            val acknowledgeParams = AcknowledgePurchaseParams.newBuilder()
+                                .setPurchaseToken(ownedPurchase.purchaseToken)
+                                .build()
+                            billingClient?.acknowledgePurchase(acknowledgeParams) { ackResult ->
+                                if (ackResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                                    postCallback("Subscribed Successfully", isSuccessFull = true)
+                                } else {
+                                    postCallback("Acknowledgment Failed Please Restart App", isSuccessFull = false)
+                                }
+                            }
+                        } else {
+                            postCallback("Subscribed Successfully", isSuccessFull = true)
+                        }
+                    } else {
+                        postCallback("Purchase Failed", isSuccessFull = false)
+                    }
+                } else {
+                    postCallback("Purchase Failed", isSuccessFull = false)
+                }
+            }
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ERROR)  {
             postCallback("Purchase Failed", isSuccessFull = false)
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED)  {
