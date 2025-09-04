@@ -1,6 +1,5 @@
 package com.statuses.statussavers
 
-import android.content.IntentFilter
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.TextView
@@ -12,6 +11,8 @@ import androidx.core.view.WindowInsetsCompat
 class RewardAds : AppCompatActivity() {
 
     private lateinit var buyButton: TextView
+    private var subscriptionManager: SubscriptionManager? = SubscriptionManager()
+    private var setupFinished: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +34,24 @@ class RewardAds : AppCompatActivity() {
 
             }
         }
+        setupSubscriptionManager()
+    }
+
+    private fun setupSubscriptionManager() {
+        subscriptionManager?.onPurchaseCallback = { value, isSuccessFull ->
+            Toast.makeText(this, value, Toast.LENGTH_SHORT).show()
+            if (isSuccessFull) {
+                HelperClass.adsDisabled = true
+                finish()
+            }
+        }
+        subscriptionManager?.initBillingClient(this) { isSetupFinished ->
+            if (isSetupFinished) {
+                setupFinished = true
+            } else {
+                setupFinished = false
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -46,19 +65,16 @@ class RewardAds : AppCompatActivity() {
     }
 
     private fun startPurchaseFlow() {
-        SubscriptionManager.onPurchaseCallback = { value, isSuccessFull ->
-            Toast.makeText(this, value, Toast.LENGTH_LONG).show()
-            if (isSuccessFull) {
-                HelperClass.adsDisabled = true
-                finish()
-            }
+        if (setupFinished) {
+            subscriptionManager?.launchSubscriptionFlow(this)
+        } else {
+            Toast.makeText(this, "Something Went Wrong", Toast.LENGTH_SHORT).show()
         }
-        SubscriptionManager.initBillingClient(this) { isSetupFinished ->
-            if (isSetupFinished) {
-                SubscriptionManager.launchSubscriptionFlow(this)
-            } else {
-                Toast.makeText(this, "Something Went Wrong", Toast.LENGTH_SHORT).show()
-            }
-        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        subscriptionManager?.endConnection()
+        subscriptionManager = null
     }
 }

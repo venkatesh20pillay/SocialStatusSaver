@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 
 class Splash : AppCompatActivity() {
+    private var subscriptionManager: SubscriptionManager? = SubscriptionManager()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -29,9 +30,9 @@ class Splash : AppCompatActivity() {
     }
 
     private fun initialChecks() {
-        SubscriptionManager.initBillingClient(this) { isSetupFinished ->
+        subscriptionManager?.initBillingClient(this) { isSetupFinished ->
             if (isSetupFinished) {
-                SubscriptionManager.checkSubscription { isSubscribed ->
+                subscriptionManager?.checkSubscription { isSubscribed ->
                     Handler(Looper.getMainLooper()).post {
                         HelperClass.adsDisabled = isSubscribed
                         startPremissionCheck()
@@ -108,5 +109,11 @@ class Splash : AppCompatActivity() {
 
     companion object {
         const val SPLASH_TIMER: Int = 1000
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        subscriptionManager?.endConnection()
+        subscriptionManager = null
     }
 }
