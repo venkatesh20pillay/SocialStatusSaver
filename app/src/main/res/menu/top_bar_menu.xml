@@ -8,6 +8,10 @@
         android:title="How to use"
         android:icon="@drawable/ic_baseline_info_24"
         app:showAsAction="never"></item>
+    <item
+        android:id="@+id/removeads"
+        android:title="Remove Ads"
+        app:showAsAction="never"></item>
 
 
 </menu>

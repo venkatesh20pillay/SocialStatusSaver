@@ -15,7 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WhatsappSavers">
-        <activity android:name=".MoreActivity"></activity>
+        <activity
+            android:name=".RewardAds"
+            android:exported="false" />
+        <activity android:name=".MoreActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".HowToUse" />
         <activity android:name=".Picture" />
@@ -39,13 +42,15 @@
             android:theme="@style/Theme.WhatsappSavers">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/app_id"/>
+            android:value="@string/app_id" />
     </application>
 
 </manifest>

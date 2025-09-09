@@ -8,17 +8,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.Window
-import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdListener
@@ -43,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private var myDialog: Dialog? = null
     var maxAdView: MaxAdView? = null
     private var interstitialAd: MaxInterstitialAd? = null
-    private var textView: TextView? = null
+    private var adSpacetextView: TextView? = null
     private var linearLayout: LinearLayout? = null
     private var reviewManager: ReviewManager? = null
 
@@ -63,12 +59,23 @@ class MainActivity : AppCompatActivity() {
         val viewPager = binding!!.viewPager
         viewPager.adapter = sectionsPagerAdapter
         tabs.setupWithViewPager(viewPager)
+        maxAdView = findViewById<View>(R.id.maxAd1) as MaxAdView
         bottomNavigationView = findViewById<View>(R.id.bottomNavigationView) as BottomNavigationView
-        textView = findViewById<View>(R.id.adSpace) as TextView
+        adSpacetextView = findViewById<View>(R.id.adSpace) as TextView
         linearLayout = findViewById<View>(R.id.linearlayout) as LinearLayout
         setupBottomBar()
-        setApplovin()
+        checkAndInitAds()
         updatePopupData()
+    }
+
+    private fun checkAndInitAds() {
+        if (HelperClass.adsDisabled) {
+            adSpacetextView!!.visibility = View.GONE
+            maxAdView!!.visibility = View.GONE
+        } else {
+            setApplovin()
+        }
+
     }
 
     private fun updatePopupData() {
@@ -163,7 +170,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadAppLovinAd() {
-        maxAdView = findViewById<View>(R.id.maxAd1) as MaxAdView
+        adSpacetextView!!.visibility = View.GONE
         maxAdView!!.visibility = View.VISIBLE
         maxAdView!!.setListener(object : MaxAdViewAdListener {
             override fun onAdExpanded(maxAd: MaxAd) {
@@ -173,6 +180,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onAdLoaded(maxAd: MaxAd) {
+
             }
 
             override fun onAdDisplayed(maxAd: MaxAd) {
@@ -244,9 +252,24 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        // Find the specific item and update its visibility
+        val removeAds = menu.findItem(R.id.removeads)
+        if(HelperClass.adsDisabled) {
+            removeAds.isVisible = false
+        } else {
+            removeAds.isVisible = true
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onResume() {
         super.onResume()
         bottomNavigationView!!.selectedItemId = R.id.home
+        if (HelperClass.adsDisabled) {
+            adSpacetextView!!.visibility = View.GONE
+            maxAdView!!.visibility = View.GONE
+        }
         count += 1
         if (count == 2) {
             updateReviewData()
@@ -258,7 +281,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showApplovinInterstitialAd() {
-        if (interstitialAd != null && interstitialAd!!.isReady) {
+        if (!HelperClass.adsDisabled && interstitialAd != null && interstitialAd!!.isReady) {
             interstitialAd!!.showAd()
         }
     }
@@ -271,6 +294,10 @@ class MainActivity : AppCompatActivity() {
                 openHowToUse()
                 return true
             }
+            R.id.removeads -> {
+                openRemoveAds()
+                return true
+            }
 
             else -> return super.onOptionsItemSelected(item)
         }
@@ -278,6 +305,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun openHowToUse() {
         val intent = Intent(this, HowToUse::class.java)
+        startActivity(intent)
+    }
+
+    private fun openRemoveAds() {
+        val intent = Intent(this, RewardAds::class.java)
         startActivity(intent)
     }
 
