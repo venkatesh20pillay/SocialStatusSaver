@@ -304,10 +304,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openHowToUse() {
-        AppLovinSdk.getInstance( this ).showMediationDebugger();
-
-//        val intent = Intent(this, HowToUse::class.java)
-//        startActivity(intent)
+        val intent = Intent(this, HowToUse::class.java)
+        startActivity(intent)
     }
 
     private fun openRemoveAds() {

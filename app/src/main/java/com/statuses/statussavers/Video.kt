@@ -11,10 +11,8 @@ import android.content.IntentSender
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
-import android.os.Build.VERSION
 import android.os.Bundle
 import android.os.Environment
-import android.os.ParcelFileDescriptor
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.view.MenuItem
@@ -60,11 +58,7 @@ class Video : AppCompatActivity() {
         repost = findViewById(R.id.repost)
         share.setOnClickListener { shareVideo() }
         repost.setOnClickListener {
-            if (VERSION.SDK_INT >= 30) {
-                repostVideo()
-            } else {
-
-            }
+            repostVideo()
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
