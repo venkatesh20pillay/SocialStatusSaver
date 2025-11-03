@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WhatsappSavers">
         <activity
+            android:name=".DirectMessage"
+            android:exported="false" />
+        <activity
             android:name=".RewardAds"
             android:exported="false" />
         <activity android:name=".MoreActivity" />

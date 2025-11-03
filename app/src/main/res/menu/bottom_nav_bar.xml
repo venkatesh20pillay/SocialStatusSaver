@@ -4,6 +4,9 @@
     <item android:title="Home"
         android:id="@+id/home"
         android:icon="@drawable/ic_baseline_home_24"/>
+    <item android:title="Direct Message"
+        android:id="@+id/dm"
+        android:icon="@drawable/baseline_message_24"/>
     <item android:title="More"
         android:id="@+id/more"
         android:icon="@drawable/ic_baseline_play_circle_outline_24"/>

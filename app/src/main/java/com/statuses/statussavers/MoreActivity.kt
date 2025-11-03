@@ -65,10 +65,20 @@ class MoreActivity : AppCompatActivity() {
                     openHomeActivity()
                     true
                 }
+                R.id.dm -> {
+                    openDirectMessageActivity()
+                    true
+                }
                 R.id.more -> true
                 else -> false
             }
         }
+    }
+
+    private fun openDirectMessageActivity() {
+        bottomNavigationView!!.selectedItemId = R.id.home
+        val intent = Intent(this, DirectMessage::class.java)
+        startActivity(intent)
     }
 
     private fun openHomeActivity() {

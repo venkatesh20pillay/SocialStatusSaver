@@ -11,8 +11,8 @@ android {
         applicationId "com.statuses.statussavers"
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 50
-        versionName "5.2"
+        versionCode 52
+        versionName "5.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -57,4 +57,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.android.billingclient:billing-ktx:6.0.1'
     implementation 'com.applovin.mediation:facebook-adapter:6.19.0.2'
+    implementation 'com.hbb20:ccp:2.6.0'
 }

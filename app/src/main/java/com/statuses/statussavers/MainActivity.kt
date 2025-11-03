@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         adSpacetextView = findViewById<View>(R.id.adSpace) as TextView
         linearLayout = findViewById<View>(R.id.linearlayout) as LinearLayout
         setupBottomBar()
-        checkAndInitAds()
+        //checkAndInitAds()
         updatePopupData()
     }
 
@@ -237,6 +237,10 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView!!.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> return@OnNavigationItemSelectedListener true
+                R.id.dm -> {
+                    openDirectMessageActivity()
+                    return@OnNavigationItemSelectedListener true
+                }
                 R.id.more -> {
                     openMoreActivity()
                     return@OnNavigationItemSelectedListener true
@@ -304,12 +308,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openHowToUse() {
-        val intent = Intent(this, HowToUse::class.java)
+        val intent = Intent(this, DirectMessage::class.java)
         startActivity(intent)
     }
 
     private fun openRemoveAds() {
         val intent = Intent(this, RewardAds::class.java)
+        startActivity(intent)
+    }
+
+    private fun openDirectMessageActivity() {
+        bottomNavigationView!!.selectedItemId = R.id.home
+        val intent = Intent(this, DirectMessage::class.java)
         startActivity(intent)
     }
 
