@@ -13,7 +13,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.ParcelFileDescriptor
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.view.MenuItem
@@ -40,6 +39,7 @@ class Video : AppCompatActivity() {
 
     private lateinit var download: ImageView
     private lateinit var share: ImageView
+    private lateinit var repost: ImageView
     private lateinit var mparticularvideo: VideoView
     private lateinit var uri1: Uri
     private lateinit var rootLayout: View
@@ -55,7 +55,11 @@ class Video : AppCompatActivity() {
         mparticularvideo = findViewById(R.id.particularvideo)
         share = findViewById(R.id.share)
         download = findViewById(R.id.download)
+        repost = findViewById(R.id.repost)
         share.setOnClickListener { shareVideo() }
+        repost.setOnClickListener {
+            repostVideo()
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -214,6 +218,49 @@ class Video : AppCompatActivity() {
                     putExtra(Intent.EXTRA_STREAM, mUri)
                 }
                 startActivity(Intent.createChooser(videoshare, "Share"))
+            } else {
+                Toast.makeText(applicationContext, "Unable to share", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(applicationContext, "Unable to share", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+    }
+
+    private fun repostVideo() {
+        var mUri: Uri? = null
+        try {
+            val mUriField: Field = VideoView::class.java.getDeclaredField("mUri")
+            mUriField.isAccessible = true
+            mUri = mUriField.get(mparticularvideo) as Uri?
+            if (mUri != null) {
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    // Set the MIME type for a video file
+                    type = "video/*"
+
+                    // Add the video URI as the stream data
+                    putExtra(Intent.EXTRA_STREAM, mUri)
+
+                    // Grant read permission to the target app (WhatsApp)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    // OPTIONAL: Add initial text (can be empty if only sharing video)
+                    putExtra(Intent.EXTRA_TEXT, "Check out this video!")
+
+                    // Target the specific app: WhatsApp package name
+                    // This is the key step for direct sharing
+                    setPackage("com.whatsapp")
+                }
+
+                try {
+                    // 3. Start the activity
+                    startActivity(shareIntent)
+                } catch (e: Exception) {
+                    // Handle case where WhatsApp is not installed
+                    Toast.makeText(this, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show()
+                    e.printStackTrace()
+                }
             } else {
                 Toast.makeText(applicationContext, "Unable to share", Toast.LENGTH_SHORT).show()
                 finish()

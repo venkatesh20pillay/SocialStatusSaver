@@ -37,6 +37,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
+                android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
                 android:src="@mipmap/download"
                 android:id="@+id/download">
@@ -46,10 +47,20 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
+                android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
                 android:src="@mipmap/share_new"
                 android:id="@+id/share">
+            </ImageView>
 
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
+                android:src="@mipmap/repost"
+                android:id="@+id/repost">
             </ImageView>
 
         </LinearLayout>

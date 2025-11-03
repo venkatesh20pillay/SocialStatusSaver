@@ -19,7 +19,6 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.NonNull
@@ -43,6 +42,7 @@ class Picture : AppCompatActivity() {
     private lateinit var mparticularimage: ImageView
     private lateinit var download: ImageView
     private lateinit var share: ImageView
+    private lateinit var repost: ImageView
     private lateinit var rootLayout: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +55,7 @@ class Picture : AppCompatActivity() {
         mparticularimage = findViewById(R.id.particularimage)
         share = findViewById(R.id.share)
         download = findViewById(R.id.download)
-
+        repost = findViewById(R.id.repost)
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             rootLayout.updatePadding(bottom = systemBars.bottom)
@@ -67,6 +67,14 @@ class Picture : AppCompatActivity() {
                 shareImage()
             } else {
                 shareImage2()
+            }
+        }
+
+        repost.setOnClickListener {
+            if (VERSION.SDK_INT >= 30) {
+                repostImage()
+            } else {
+                repostImage2()
             }
         }
 
@@ -202,6 +210,47 @@ class Picture : AppCompatActivity() {
         startActivity(Intent.createChooser(intent, "Share Via"))
     }
 
+    private fun repostImage2() {
+        val bitmapValue = mparticularimage.getDrawable().toBitmap()
+        val uri = getImageToShare(bitmapValue)
+        val whatsappPackage = "com.whatsapp"
+
+        // The specific action used to share to status
+        val WA_STATUS_ACTION = "com.whatsapp.intent.action.SEND_STATUS"
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            // Set the Intent action to the specific WhatsApp Status action (may not be officially documented)
+            // Alternatively, you can use Intent.ACTION_SEND and rely on setPackage
+            // which will usually open the contact picker where the user can choose "My Status".
+            action = Intent.ACTION_SEND
+
+            // This is the key to targeting WhatsApp:
+            setPackage(whatsappPackage)
+
+            // Set the image URI and type
+            putExtra(Intent.EXTRA_STREAM, uri)
+            type = "image/jpeg" // Use a generic image type or a specific one if known
+
+            // Grant read permission to WhatsApp for the URI
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        // Check if WhatsApp is installed before attempting to start the activity
+        if (shareIntent.resolveActivity(this.packageManager) != null) {
+            try {
+                // Use Intent.createChooser as a fallback, though for a direct share,
+                // starting the intent directly is preferred if you're sure of the package.
+                this.startActivity(shareIntent)
+            } catch (e: Exception) {
+                // Handle activity not found or other exceptions
+                Toast.makeText(this, "Could not share to WhatsApp.", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+            }
+        } else {
+            Toast.makeText(this, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun getImageToShare(bitmap: Bitmap): Uri? {
         var uri: Uri? = null
         try {
@@ -220,7 +269,6 @@ class Picture : AppCompatActivity() {
         }
         return uri
     }
-
 
     private fun shareImage() {
         val drawable = mparticularimage.drawable
@@ -263,6 +311,80 @@ class Picture : AppCompatActivity() {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             startActivity(Intent.createChooser(intent, "Share Image"))
+        }
+    }
+
+    private fun repostImage() {
+        val drawable = mparticularimage.drawable
+
+        if (drawable !is BitmapDrawable) {
+            Toast.makeText(this, "Image not available to share", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val bitmap = drawable.bitmap
+        var imageUri: Uri? = null
+        try {
+            val values = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, "shared_image_${System.currentTimeMillis()}.png")
+                put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                put(MediaStore.Images.Media.IS_PENDING, 1) // for newer Android versions
+            }
+            imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            imageUri?.let {
+                contentResolver.openOutputStream(it).use { out ->
+                    if (out != null) {
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                    }
+                }
+                values.clear()
+                values.put(MediaStore.Images.Media.IS_PENDING, 0)
+                contentResolver.update(it, values, null, null)
+            } ?: run {
+                Toast.makeText(this, "Failed to create image Uri", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Image save failed", Toast.LENGTH_SHORT).show()
+        }
+
+        imageUri?.let {
+            val whatsappPackage = "com.whatsapp"
+
+            // The specific action used to share to status
+            val WA_STATUS_ACTION = "com.whatsapp.intent.action.SEND_STATUS"
+
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                // Set the Intent action to the specific WhatsApp Status action (may not be officially documented)
+                // Alternatively, you can use Intent.ACTION_SEND and rely on setPackage
+                // which will usually open the contact picker where the user can choose "My Status".
+                action = Intent.ACTION_SEND
+
+                // This is the key to targeting WhatsApp:
+                setPackage(whatsappPackage)
+
+                // Set the image URI and type
+                putExtra(Intent.EXTRA_STREAM, imageUri)
+                type = "image/jpeg" // Use a generic image type or a specific one if known
+
+                // Grant read permission to WhatsApp for the URI
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            // Check if WhatsApp is installed before attempting to start the activity
+            if (shareIntent.resolveActivity(this.packageManager) != null) {
+                try {
+                    // Use Intent.createChooser as a fallback, though for a direct share,
+                    // starting the intent directly is preferred if you're sure of the package.
+                    this.startActivity(shareIntent)
+                } catch (e: Exception) {
+                    // Handle activity not found or other exceptions
+                    Toast.makeText(this, "Could not share to WhatsApp.", Toast.LENGTH_SHORT).show()
+                    e.printStackTrace()
+                }
+            } else {
+                Toast.makeText(this, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
