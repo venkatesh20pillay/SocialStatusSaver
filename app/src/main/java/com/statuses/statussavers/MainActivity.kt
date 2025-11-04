@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         adSpacetextView = findViewById<View>(R.id.adSpace) as TextView
         linearLayout = findViewById<View>(R.id.linearlayout) as LinearLayout
         setupBottomBar()
-        //checkAndInitAds()
+        checkAndInitAds()
         updatePopupData()
     }
 
@@ -308,7 +308,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openHowToUse() {
-        val intent = Intent(this, DirectMessage::class.java)
+        val intent = Intent(this, HowToUse::class.java)
         startActivity(intent)
     }
 

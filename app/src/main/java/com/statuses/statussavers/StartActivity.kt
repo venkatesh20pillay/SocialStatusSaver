@@ -73,11 +73,11 @@ class StartActivity : AppCompatActivity() {
         setupLauncher()
         setView()
         setupOnClickButton()
-//        if(!HelperClass.adsDisabled) {
-//            setApplovin()
-//        } else {
-//            maxAdView!!.visibility = View.GONE
-//        }
+        if(!HelperClass.adsDisabled) {
+            setApplovin()
+        } else {
+            maxAdView!!.visibility = View.GONE
+        }
     }
 
     private fun setApplovin() {
