@@ -15,7 +15,13 @@ class SubscriptionManager : PurchasesUpdatedListener {
     var onPurchaseCallback: ((String, Boolean) -> Unit)? = null
 
     fun initBillingClient(context: Context, onSetupFinished: (Boolean) -> Unit) {
-        billingClient = BillingClient.newBuilder(context).setListener(this).enablePendingPurchases().build()
+        billingClient = BillingClient.newBuilder(context)
+            .setListener(this)
+            .enablePendingPurchases(
+                PendingPurchasesParams.newBuilder().enableOneTimeProducts().build()
+            )
+            .enableAutoServiceReconnection()
+            .build()
 
         billingClient?.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
@@ -130,15 +136,17 @@ class SubscriptionManager : PurchasesUpdatedListener {
             .setProductList(productList)
             .build()
 
-        billingClient?.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+        billingClient?.queryProductDetailsAsync(params) { billingResult, queryProductDetailsResult ->
+            val productDetailsList = queryProductDetailsResult.productDetailsList
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && productDetailsList.isNotEmpty()) {
                 val offerToken = productDetailsList[0].subscriptionOfferDetails?.firstOrNull()?.offerToken
+                if (offerToken.isNullOrEmpty()) return@queryProductDetailsAsync
                 val billingFlowParams = BillingFlowParams.newBuilder()
                     .setProductDetailsParamsList(
                         listOf(
                             BillingFlowParams.ProductDetailsParams.newBuilder()
                                 .setProductDetails(productDetailsList[0])
-                                .setOfferToken(offerToken!!)
+                                .setOfferToken(offerToken)
                                 .build()
                         )
                     )
