@@ -81,7 +81,7 @@ class SubscriptionManager : PurchasesUpdatedListener {
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED)  {
                 isSubscribedChecked(false)
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.BILLING_UNAVAILABLE)  {
-                isSubscribedChecked(false)
+                isSubscribedChecked(true)
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_UNAVAILABLE)  {
                 isSubscribedChecked(false)
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED)  {
