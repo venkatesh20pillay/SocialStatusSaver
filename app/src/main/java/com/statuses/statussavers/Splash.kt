@@ -1,5 +1,6 @@
 package com.statuses.statussavers
 
+import androidx.activity.enableEdgeToEdge
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,6 +17,7 @@ class Splash : AppCompatActivity() {
     private var subscriptionManager: SubscriptionManager? = SubscriptionManager()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_splash)
         val actionBar = this.supportActionBar
         actionBar?.hide()

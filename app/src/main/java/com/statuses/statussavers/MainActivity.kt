@@ -1,5 +1,6 @@
 package com.statuses.statussavers
 
+import androidx.activity.enableEdgeToEdge
 import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
         val tabs = binding!!.tabs

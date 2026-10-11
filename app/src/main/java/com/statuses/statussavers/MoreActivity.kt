@@ -1,5 +1,6 @@
 package com.statuses.statussavers
 
+import androidx.activity.enableEdgeToEdge
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -24,6 +25,7 @@ class MoreActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_more)
         rootLayout = findViewById(R.id.rootLayout)
         bottomNavigationView = findViewById(R.id.bottomNavigationViewMore)

@@ -1,5 +1,6 @@
 package com.statuses.statussavers
 
+import androidx.activity.enableEdgeToEdge
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
@@ -47,6 +48,7 @@ class Picture : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_picture)
         supportActionBar?.title = "Picture"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

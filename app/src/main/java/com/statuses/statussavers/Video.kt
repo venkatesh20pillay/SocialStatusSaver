@@ -1,5 +1,6 @@
 package com.statuses.statussavers
 
+import androidx.activity.enableEdgeToEdge
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
@@ -46,6 +47,7 @@ class Video : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
         setContentView(R.layout.activity_video)

@@ -1,5 +1,6 @@
 package com.statuses.statussavers
 
+import androidx.activity.enableEdgeToEdge
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -22,6 +23,7 @@ class HowToUse : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_how_to_use_2)
         rootLayout = findViewById(R.id.rootLayout)
         scrollView = findViewById(R.id.scrollView)

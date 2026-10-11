@@ -1,5 +1,6 @@
 package com.statuses.statussavers
 
+import androidx.activity.enableEdgeToEdge
 import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
@@ -47,6 +48,7 @@ class StartActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_start_v2)
         val rootView = findViewById<View>(R.id.root_layout)  // Make sure you have a root layout
         ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, insets ->
